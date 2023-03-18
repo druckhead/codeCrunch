@@ -42,3 +42,14 @@ class Company(models.Model):
         ordering = ["name"]
         verbose_name = _("company")
         verbose_name_plural = _("companies")
+
+
+class Job(models.Model):
+    title = models.CharField(max_length=128)
+    seniority = models.CharField(max_length=16)
+    company = models.ManyToManyField(Company)
+
+    class Meta:
+        ordering = ["title"]
+        verbose_name = _("job")
+        verbose_name_plural = _("jobs")
