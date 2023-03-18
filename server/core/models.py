@@ -74,3 +74,14 @@ class QuestionSolution(TimeStampedModel, models.Model):
     class Meta:
         verbose_name = _("question_solution")
         verbose_name_plural = _("question_solutions")
+
+
+class QuestionSolutionComments(TimeStampedModel, models.Model):
+    message = models.CharField(max_length=500)
+    author = models.CharField(max_length=32)
+    parent = models.ForeignKey("self", on_delete=models.DO_NOTHING)
+    question_solution = models.ForeignKey(QuestionSolution, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _("question_solution_comment")
+        verbose_name_plural = _("question_solution_comments")
