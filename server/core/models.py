@@ -85,3 +85,12 @@ class QuestionSolutionComments(TimeStampedModel, models.Model):
     class Meta:
         verbose_name = _("question_solution_comment")
         verbose_name_plural = _("question_solution_comments")
+
+
+class Assignment(TimeStampedModel, TitleDescriptionModel, models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    job = models.ForeignKey(Job, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        verbose_name = _("assignment")
+        verbose_name_plural = _("assignments")
