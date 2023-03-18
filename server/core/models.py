@@ -94,3 +94,15 @@ class Assignment(TimeStampedModel, TitleDescriptionModel, models.Model):
     class Meta:
         verbose_name = _("assignment")
         verbose_name_plural = _("assignments")
+
+
+class AssignmentSolution(TimeStampedModel, models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    thumbs_up = models.IntegerField()
+    thumbs_down = models.IntegerField()
+    solution = models.TextField()
+
+    class Meta:
+        verbose_name = _("assignment_solution")
+        verbose_name_plural = _("assignment_solutions")
