@@ -62,3 +62,15 @@ class Question(TimeStampedModel, TitleDescriptionModel, models.Model):
     class Meta:
         verbose_name = _("question")
         verbose_name_plural = _("questions")
+
+
+class QuestionSolution(TimeStampedModel, models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    thumbs_up = models.IntegerField()
+    thumbs_down = models.IntegerField()
+    solution = models.TextField()
+
+    class Meta:
+        verbose_name = _("question_solution")
+        verbose_name_plural = _("question_solutions")
