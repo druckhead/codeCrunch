@@ -106,3 +106,16 @@ class AssignmentSolution(TimeStampedModel, models.Model):
     class Meta:
         verbose_name = _("assignment_solution")
         verbose_name_plural = _("assignment_solutions")
+
+
+class AssignmentSolutionComments(TimeStampedModel, models.Model):
+    message = models.CharField(max_length=500)
+    author = models.CharField(max_length=32)
+    parent = models.ForeignKey("self", on_delete=models.DO_NOTHING)
+    assignment_solution = models.ForeignKey(
+        AssignmentSolution, on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = _("assignment_solution_commment")
+        verbose_name_plural = _("assignment_solution_comments")
