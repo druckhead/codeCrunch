@@ -53,3 +53,12 @@ class Job(models.Model):
         ordering = ["title"]
         verbose_name = _("job")
         verbose_name_plural = _("jobs")
+
+
+class Question(TimeStampedModel, TitleDescriptionModel, models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    job = models.ForeignKey(Job, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        verbose_name = _("question")
+        verbose_name_plural = _("questions")
