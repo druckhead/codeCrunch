@@ -1,7 +1,9 @@
+from operator import mod
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 
 from .managers import UserManager
 
@@ -30,3 +32,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         ordering = ["-date_joined"]
         verbose_name = _("user")
         verbose_name_plural = _("users")
+
+
+class Company(models.Model):
+    name = models.CharField(max_length=128)
+    country = models.CharField(max_length=128)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = _("company")
+        verbose_name_plural = _("companies")
