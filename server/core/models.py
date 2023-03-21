@@ -76,17 +76,6 @@ class QuestionSolution(TimeStampedModel, models.Model):
         verbose_name_plural = _("question_solutions")
 
 
-class QuestionSolutionComments(TimeStampedModel, models.Model):
-    message = models.CharField(max_length=500)
-    author = models.CharField(max_length=32)
-    parent = models.ForeignKey("self", on_delete=models.DO_NOTHING)
-    question_solution = models.ForeignKey(QuestionSolution, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = _("question_solution_comment")
-        verbose_name_plural = _("question_solution_comments")
-
-
 class Assignment(TimeStampedModel, TitleDescriptionModel, models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     job = models.ForeignKey(Job, on_delete=models.DO_NOTHING)
@@ -106,16 +95,3 @@ class AssignmentSolution(TimeStampedModel, models.Model):
     class Meta:
         verbose_name = _("assignment_solution")
         verbose_name_plural = _("assignment_solutions")
-
-
-class AssignmentSolutionComments(TimeStampedModel, models.Model):
-    message = models.CharField(max_length=500)
-    author = models.CharField(max_length=32)
-    parent = models.ForeignKey("self", on_delete=models.DO_NOTHING)
-    assignment_solution = models.ForeignKey(
-        AssignmentSolution, on_delete=models.CASCADE
-    )
-
-    class Meta:
-        verbose_name = _("assignment_solution_commment")
-        verbose_name_plural = _("assignment_solution_comments")
