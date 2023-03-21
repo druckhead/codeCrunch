@@ -1,11 +1,14 @@
 from rest_framework import serializers
 
+from .JobSerializers import JobSerializer
+
 from .UserSerializers import UserSerializer
 from ..models import Post, PostSolution
 
 
 class PostSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    job = JobSerializer()
 
     class Meta:
         model = Post
