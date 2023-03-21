@@ -70,8 +70,8 @@ class Post(TimeStampedModel, TitleDescriptionModel, models.Model):
 class PostSolution(TimeStampedModel, models.Model):
     user = models.ManyToManyField(User)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    thumbs_up = models.IntegerField()
-    thumbs_down = models.IntegerField()
+    thumbs_up = models.PositiveIntegerField(default=0)
+    thumbs_down = models.PositiveIntegerField(default=0)
     solution = models.TextField()
 
     class Meta:
