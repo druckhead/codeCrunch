@@ -1,4 +1,3 @@
-import imp
 from rest_framework import serializers
 
 from .UserSerializers import UserSerializer
