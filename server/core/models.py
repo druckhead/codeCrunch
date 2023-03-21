@@ -18,7 +18,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     email = models.EmailField(max_length=150, unique=True)
     is_superuser = models.BooleanField(default=False)
-    is_moderator = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 
