@@ -1,8 +1,12 @@
 from rest_framework import serializers
 
+from ..models import User
+
 
 class UserSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = User
+        exclude = ["password"]
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
