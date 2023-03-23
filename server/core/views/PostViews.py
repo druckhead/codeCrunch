@@ -2,7 +2,7 @@ from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from server.core.views import customviewsets
+from ..views import customviewsets
 
 from ..models import Post, PostSolution
 from ..serializers.PostSerializers import (
