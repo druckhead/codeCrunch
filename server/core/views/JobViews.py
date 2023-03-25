@@ -1,21 +1,19 @@
-from rest_framework import mixins, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from server.core.views import customviewsets
 from ..models import Job
-from ..serializers.JobSerializers import JobSerializer, CreateJobSerializer
+from ..serializers import JobSerializers as serializers
 
 
-class JobViewSet(viewsets.ReadOnlyModelViewSet):
+class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all()
-    serializer_class = JobSerializer
+    serializer_class = serializers.JobSerializer
     permission_classes = [AllowAny]
     authentication_classes = [JWTAuthentication]
 
-
-class CreateJobViewSet(customviewsets.CreateUpdateDeleteViewSet):
-    queryset = Job.objects.all()
-    serializer_class = CreateJobSerializer
-    permission_classes = [AllowAny]
-    authentication_classes = [JWTAuthentication]
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return serializers.JobSerializer
+        elif self.action in ("update", "partial_update", "create"):
+            return serializers.CreateJobSerializer
