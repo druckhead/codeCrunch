@@ -3,12 +3,13 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from ..models import User
+from ..permissions.userpermissions import UserPermissions
 from ..serializers import UserSerializers as serializers
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    permission_classes = [AllowAny]
+    permission_classes = [UserPermissions]
     serializer_class = serializers.UserSerializer
     authentication_classes = [JWTAuthentication]
 
