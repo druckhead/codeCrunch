@@ -1,41 +1,32 @@
-from rest_framework import mixins, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from ..views import customviewsets
-
 from ..models import Post, PostSolution
-from ..serializers.PostSerializers import (
-    PostSerializer,
-    CreatePostSerializer,
-    PostSolutionSerializer,
-    CreatePostSolutionSerializer,
-)
+from ..serializers import PostSerializers as serializers
 
 
-class PostViewSet(viewsets.ReadOnlyModelViewSet):
+class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = serializers.PostSerializer
     permission_classes = [AllowAny]
     authentication_classes = [JWTAuthentication]
 
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return serializers.PostSerializer
+        elif self.action in ("update", "partial_update", "create"):
+            return serializers.CreatePostSerializer
 
-class CreatePostViewSet(customviewsets.CreateUpdateDeleteViewSet):
-    queryset = Post.objects.all()
-    serializer_class = CreatePostSerializer
-    permission_classes = [AllowAny]
-    authentication_classes = [JWTAuthentication]
 
-
-class PostSolutionViewSet(viewsets.ReadOnlyModelViewSet):
+class PostSolutionViewSet(viewsets.ModelViewSet):
     queryset = PostSolution.objects.all()
-    serializer_class = PostSolutionSerializer
+    serializer_class = serializers.PostSolutionSerializer
     permission_classes = [AllowAny]
     authentication_classes = [JWTAuthentication]
 
-
-class CreatePostSolutionViewSet(customviewsets.CreateUpdateDeleteViewSet):
-    queryset = PostSolution.objects.all()
-    serializer_class = CreatePostSolutionSerializer
-    permission_classes = [AllowAny]
-    authentication_classes = [JWTAuthentication]
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return serializers.PostSolutionSerializer
+        elif self.action in ("update", "partial_update", "create"):
+            return serializers.CreatePostSolutionSerializer
