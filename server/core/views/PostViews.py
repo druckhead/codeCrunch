@@ -3,6 +3,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from ..models import Post, PostSolution
+from ..permissions.basepermissions import BaseCUDPermission
 from ..permissions.postpermissions import PostPermissions, PostSolutionPermissions
 from ..serializers import PostSerializers as serializers
 
@@ -10,7 +11,7 @@ from ..serializers import PostSerializers as serializers
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = serializers.PostSerializer
-    permission_classes = [PostPermissions]
+    permission_classes = [PostPermissions, BaseCUDPermission]
     authentication_classes = [JWTAuthentication]
 
     def get_serializer_class(self):
@@ -23,7 +24,7 @@ class PostViewSet(viewsets.ModelViewSet):
 class PostSolutionViewSet(viewsets.ModelViewSet):
     queryset = PostSolution.objects.all()
     serializer_class = serializers.PostSolutionSerializer
-    permission_classes = [PostSolutionPermissions]
+    permission_classes = [PostSolutionPermissions, BaseCUDPermission]
     authentication_classes = [JWTAuthentication]
 
     def get_serializer_class(self):

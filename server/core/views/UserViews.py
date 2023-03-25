@@ -15,6 +15,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
+            if self.request.user.is_superuser:
+                return serializers.AdminUserSerializer
             return serializers.UserSerializer
         elif self.action in ("update", "partial_update", "create"):
             return serializers.CreateUserSerializer
