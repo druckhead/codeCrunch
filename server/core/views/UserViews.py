@@ -1,5 +1,4 @@
-from django.core.serializers import get_serializer
-from rest_framework import mixins, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -10,6 +9,7 @@ from ..serializers import UserSerializers as serializers
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [AllowAny]
+    serializer_class = serializers.UserSerializer
     authentication_classes = [JWTAuthentication]
 
     def get_serializer_class(self):
