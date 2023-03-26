@@ -28,9 +28,6 @@ class CreatePostSerializer(serializers.ModelSerializer):
 
 
 class PostSolutionSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    post = PostSerializer()
-
     class Meta:
         model = PostSolution
         fields = "__all__"
