@@ -7,8 +7,6 @@ from ..models import Company, Job
 
 
 class JobSerializer(serializers.ModelSerializer):
-    company = CompanySerializer()
-
     class Meta:
         model = Job
         fields = "__all__"
