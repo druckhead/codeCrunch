@@ -1,5 +1,7 @@
 from rest_framework.permissions import BasePermission
 
+from ..models import Company, Job, Post, PostSolution
+
 
 class BaseCUDPermission(BasePermission):
     def has_permission(self, request, view):
@@ -8,11 +10,20 @@ class BaseCUDPermission(BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        if view.action in ("update", "partial_update"):
-            return request.user.is_authenticated and request.post.user.id == obj.id
-        if view.action == "delete":
-            return bool(
+        obj_request = self._get_request_obj(request, obj)
+        if view.action in ("update", "partial_update", "destroy"):
+            return (
                 request.user.is_authenticated
-                and request.post.user.id == obj.id
-                or request.user.is_superuser
+                and obj_request.user.id == obj.id
+                or request.user.is_authenticated
+                and request.user.is_superuser
             )
+        return True
+
+    def _get_request_obj(self, request, obj):
+        if isinstance(obj, (Company, Job)):
+            return request
+        if isinstance(obj, Post):
+            return request.post
+        if isinstance(obj, PostSolution):
+            return request.postsolution
