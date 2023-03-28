@@ -49,7 +49,7 @@ class Company(models.Model):
 class Job(models.Model):
     title = models.CharField(max_length=128)
     seniority = models.CharField(max_length=16)
-    company = models.ManyToManyField(Company)
+    companies = models.ManyToManyField(Company)
 
     class Meta:
         ordering = ["title"]
@@ -58,7 +58,7 @@ class Job(models.Model):
 
 
 class Post(TimeStampedModel, TitleDescriptionModel, models.Model):
-    user = models.ManyToManyField(User)
+    users = models.ManyToManyField(User)
     job = models.ForeignKey(Job, on_delete=models.DO_NOTHING)
     post_type = models.CharField(max_length=32)
 
@@ -68,7 +68,7 @@ class Post(TimeStampedModel, TitleDescriptionModel, models.Model):
 
 
 class PostSolution(TimeStampedModel, models.Model):
-    user = models.ManyToManyField(User)
+    users = models.ManyToManyField(User)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     thumbs_up = models.PositiveIntegerField(default=0)
     thumbs_down = models.PositiveIntegerField(default=0)
