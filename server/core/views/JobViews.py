@@ -17,5 +17,7 @@ class JobViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
             return serializers.JobSerializer
-        elif self.action in ("update", "partial_update", "create"):
+        if self.action == "create":
             return serializers.CreateJobSerializer
+        if self.action in ("update", "partial_update"):
+            return serializers.UpdateJobSerializer
