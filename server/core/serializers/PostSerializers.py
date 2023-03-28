@@ -14,12 +14,12 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CreatePostSerializer(serializers.ModelSerializer):
-    # TODO add users to fields to update users related to posts
     class Meta:
         model = Post
         fields = ["title", "description", "post_type", "job"]
 
     def create(self, validated_data):
+        # TODO add ability to save user_id on create
         post = Post(
             title=validated_data["title"],
             description=validated_data["description"],
@@ -30,6 +30,7 @@ class CreatePostSerializer(serializers.ModelSerializer):
         return post
 
     def update(self, instance, validated_data):
+        # TODO add ability to update m2m relations for users
         instance.title = validated_data.get("title", instance.title)
         instance.description = validated_data.get("description", instance.description)
         instance.post_type = validated_data.get("post_type", instance.post_type)
@@ -62,5 +63,6 @@ class CreatePostSolutionSerializer(serializers.ModelSerializer):
         return post_solution
 
     # def update(self, instance, validated_data):
+    # TODO add ability to update all data including m2m user_ids
     #     instance.solution = validated_data.get("solution", instance.solution)
     #     instance.post_id = validated_data.get("post_id", instance.post_id)
