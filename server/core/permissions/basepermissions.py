@@ -21,9 +21,10 @@ class BaseCUDPermission(BasePermission):
         return True
 
     def _get_request_obj(self, request, obj):
-        if isinstance(obj, (Company, Job)):
-            return request
-        if isinstance(obj, Post):
-            return request.post
-        if isinstance(obj, PostSolution):
-            return request.postsolution
+        return request
+        # if isinstance(obj, (Company, Job)):
+        #     return request
+        # if isinstance(obj, Post):
+        #     return request
+        # if isinstance(obj, PostSolution):
+        #     return request
