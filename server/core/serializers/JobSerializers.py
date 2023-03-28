@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import get_object_or_404
 
 from .CompanySerializers import CompanySerializer
@@ -28,7 +29,7 @@ class CreateJobSerializer(serializers.ModelSerializer):
         company = get_object_or_404(
             Company.objects.all(), name=validated_data["company_name"]
         )
-        job.company.add(company)
+        job.companies.add(company)
         return job
 
     def save(self, **kwargs):
@@ -36,22 +37,26 @@ class CreateJobSerializer(serializers.ModelSerializer):
 
 
 class UpdateJobSerializer(serializers.ModelSerializer):
-    companies = CompanySerializer(many=True)
+    company_ids = serializers.ListField(write_only=True)
 
     class Meta:
         model = Job
-        fields = ["title", "seniority", "companies"]
+        fields = ["title", "seniority", "company_ids"]
 
     def update(self, instance, validated_data):
-        company_data = validated_data.pop("company")
-        company = instance.company
-
         instance.title = validated_data.get("title", instance.title)
         instance.seniority = validated_data.get("seniority", instance.seniority)
         instance.save()
 
-        company.name = company_data.get("name", company.name)
-        company.country = company_data.get("name", company.name)
-        company.save()
+        if "company_ids" in validated_data:
+            companies = []
+            company_ids = validated_data.pop("company_ids")
+            for company_id in company_ids:
+                try:
+                    company = Company.objects.get(id=company_id)
+                    companies.append(company)
+                except:
+                    raise NotFound()
+            instance.companies.set(companies)
 
         return instance
