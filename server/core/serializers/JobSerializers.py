@@ -33,3 +33,25 @@ class CreateJobSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         return super().save(**kwargs)
+
+
+class UpdateJobSerializer(serializers.ModelSerializer):
+    companies = CompanySerializer(many=True)
+
+    class Meta:
+        model = Job
+        fields = ["title", "seniority", "companies"]
+
+    def update(self, instance, validated_data):
+        company_data = validated_data.pop("company")
+        company = instance.company
+
+        instance.title = validated_data.get("title", instance.title)
+        instance.seniority = validated_data.get("seniority", instance.seniority)
+        instance.save()
+
+        company.name = company_data.get("name", company.name)
+        company.country = company_data.get("name", company.name)
+        company.save()
+
+        return instance
