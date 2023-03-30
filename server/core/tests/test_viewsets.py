@@ -239,7 +239,11 @@ class JobViewSetTest(APITestCase):
     def test_post_create(self):
         self.client.force_authenticate(user=self.user)
         data = json.dumps(
-            {"title": "Fullstack", "seniority": "Junior", "company_name": "Microsoft"}
+            {
+                "title": "Fullstack",
+                "seniority": "Junior",
+                "company_id": self.company2.id,
+            }
         )
         response = self.client.post(
             "/api/v1/jobs", data=data, content_type="application/json"
@@ -369,7 +373,6 @@ class PostViewSetTest(APITestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED._value_)
 
     def test_update(self):
-        # TODO test update of user ids
         data = json.dumps(
             {
                 "post_type": "assignment",
@@ -474,7 +477,6 @@ class PostSolutionViewSetTest(APITestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED._value_)
 
     def test_update(self):
-        # TODO test update of user ids
         pass
 
     def test_partial_update(self):
