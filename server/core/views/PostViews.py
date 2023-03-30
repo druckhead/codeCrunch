@@ -16,14 +16,23 @@ class PostViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
 
     def create(self, request, *args, **kwargs):
-        # TODO add user id to post on create
-        return super().create(request, *args, **kwargs)
+        request_data = request.data.copy()
+        request_data["user_id"] = request.user.id
+        serializer = self.get_serializer(data=request_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
             return serializers.PostSerializer
-        elif self.action in ("update", "partial_update", "create"):
+        elif self.action == "create":
             return serializers.CreatePostSerializer
+        if self.action in ("update", "partial_update"):
+            return serializers.UpdatePostSerializer
 
 
 class PostSolutionViewSet(viewsets.ModelViewSet):
@@ -46,5 +55,7 @@ class PostSolutionViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
             return serializers.PostSolutionSerializer
-        elif self.action in ("update", "partial_update", "create"):
+        if self.action == "create":
             return serializers.CreatePostSolutionSerializer
+        if self.action in ("update", "partial_update"):
+            return serializers.UpdatePostSolutionSerializer
