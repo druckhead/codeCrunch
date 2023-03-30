@@ -14,12 +14,13 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CreatePostSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(write_only=True)
+
     class Meta:
         model = Post
-        fields = ["title", "description", "post_type", "job"]
+        fields = ["title", "description", "post_type", "job", "user_id"]
 
     def create(self, validated_data):
-        # TODO add ability to save user_id on create
         post = Post(
             title=validated_data["title"],
             description=validated_data["description"],
@@ -27,10 +28,16 @@ class CreatePostSerializer(serializers.ModelSerializer):
             job=validated_data["job"],
         )
         post.save()
+        post.users.add(validated_data["user_id"])
         return post
 
+
+class UpdatePostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ["title", "description", "post_type", "job"]
+
     def update(self, instance, validated_data):
-        # TODO add ability to update m2m relations for users
         instance.title = validated_data.get("title", instance.title)
         instance.description = validated_data.get("description", instance.description)
         instance.post_type = validated_data.get("post_type", instance.post_type)
@@ -62,7 +69,14 @@ class CreatePostSolutionSerializer(serializers.ModelSerializer):
         post_solution.users.add(validated_data["user_id"])
         return post_solution
 
-    # def update(self, instance, validated_data):
-    # TODO add ability to update all data including m2m user_ids
-    #     instance.solution = validated_data.get("solution", instance.solution)
-    #     instance.post_id = validated_data.get("post_id", instance.post_id)
+
+class UpdatePostSolutionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostSolution
+        fields = ["solution"]
+
+    def update(self, instance, validated_data):
+        instance.solution = validated_data.get("solution", instance.solution)
+
+        instance.save()
+        return instance
