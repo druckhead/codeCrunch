@@ -1,4 +1,3 @@
-from operator import mod
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
@@ -57,8 +56,18 @@ class Job(models.Model):
         verbose_name_plural = _("jobs")
 
 
+class Vote(models.TextChoices):
+    LIKE = "LI", _("Like")
+    DISLIKE = "DI", _("Dislike")
+
+
 class Post(TimeStampedModel, TitleDescriptionModel, models.Model):
-    users = models.ManyToManyField(User)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    users = models.ManyToManyField(
+        User,
+        through="PostVotes",
+        related_name="user_post_votes",
+    )
     job = models.ForeignKey(Job, on_delete=models.DO_NOTHING)
     post_type = models.CharField(max_length=32)
 
@@ -67,13 +76,48 @@ class Post(TimeStampedModel, TitleDescriptionModel, models.Model):
         verbose_name_plural = _("posts")
 
 
+class PostVotes(TimeStampedModel, models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    post = models.ForeignKey(Post, on_delete=models.DO_NOTHING)
+    vote = models.CharField(max_length=2, choices=Vote.choices)
+
+    class Meta:
+        verbose_name = _("post_vote")
+        verbose_name_plural = _("post_votes")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "post"],
+                name="unique_post_liking",
+            )
+        ]
+
+
 class PostSolution(TimeStampedModel, models.Model):
-    users = models.ManyToManyField(User)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    users = models.ManyToManyField(
+        User,
+        through="PostSolutionVotes",
+        related_name="user_postsolution_votes",
+    )
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    thumbs_up = models.PositiveIntegerField(default=0)
-    thumbs_down = models.PositiveIntegerField(default=0)
     solution = models.TextField()
 
     class Meta:
         verbose_name = _("post_solution")
         verbose_name_plural = _("post_solutions")
+
+
+class PostSolutionVotes(TimeStampedModel, models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    postsolution = models.ForeignKey(PostSolution, on_delete=models.DO_NOTHING)
+    vote = models.CharField(max_length=2, choices=Vote.choices)
+
+    class Meta:
+        verbose_name = _("postsolution_vote")
+        verbose_name_plural = _("postsolution_votes")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "postsolution"],
+                name="unique_postsolution_liking",
+            )
+        ]
