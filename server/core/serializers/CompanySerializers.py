@@ -12,7 +12,7 @@ class CompanySerializer(serializers.ModelSerializer):
 class CreateCompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
-        fields = ["name", "country"]
+        fields = "__all__"
 
     def create(self, validated_data):
         company = Company(
