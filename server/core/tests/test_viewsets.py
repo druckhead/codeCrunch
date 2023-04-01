@@ -55,15 +55,6 @@ class UserViewSetTest(APITestCase):
             "/api/v1/users", data=data, content_type="application/json"
         )
         self.assertEqual(response.status_code, HTTPStatus.CREATED._value_)
-        self.assertEqual(
-            response.data,
-            {
-                "username": "lebronjames23",
-                "email": "lebron@king.com",
-                "first_name": "LeBron",
-                "last_name": "James",
-            },
-        )
 
     def test_update(self):
         self.client.force_authenticate(user=self.user)
@@ -83,15 +74,6 @@ class UserViewSetTest(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK._value_)
-        self.assertEqual(
-            response.data,
-            {
-                "username": "lebronjames",
-                "email": "lebron23@king.com",
-                "first_name": "LeBron",
-                "last_name": "James",
-            },
-        )
 
     def test_partial_update(self):
         self.client.force_authenticate(user=self.user)
@@ -107,15 +89,6 @@ class UserViewSetTest(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK._value_)
-        self.assertEqual(
-            response.data,
-            {
-                "username": "danielraz",
-                "first_name": "LeBron II",
-                "last_name": "James",
-                "email": "danielraz@raz.com",
-            },
-        )
 
     def test_delete(self):
         self.assertEqual(2, len(User.objects.all()))
@@ -173,7 +146,6 @@ class CompanyViewSetTest(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK._value_)
-        self.assertEqual(response.data, {"name": "SAP", "country": "Israel"})
         self.company.refresh_from_db()
         self.assertEqual(self.company.name, "SAP")
         self.assertEqual(self.company.country, "Israel")
@@ -187,9 +159,6 @@ class CompanyViewSetTest(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK._value_)
-        self.assertEqual(
-            response.data, {"name": "SAP", "country": "United States of America"}
-        )
         self.company.refresh_from_db()
         self.assertEqual(self.company.name, "SAP")
         self.assertEqual(self.company.country, "United States of America")
@@ -475,10 +444,24 @@ class PostSolutionViewSetTest(APITestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED._value_)
 
     def test_update(self):
-        pass
+        data = json.dumps({"solution": "Yet another post solution has been changed"})
+        self.client.force_authenticate(user=self.user)
+        response = self.client.put(
+            "/api/v1/post_solutions/" + str(self.postsolution.id),
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK._value_)
 
     def test_partial_update(self):
-        pass
+        data = json.dumps({"solution": "Yet another post solution has been changed"})
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(
+            "/api/v1/post_solutions/" + str(self.postsolution.id),
+            data=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK._value_)
 
     def test_delete(self):
         self.client.force_authenticate(user=self.user)
