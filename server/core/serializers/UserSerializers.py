@@ -1,4 +1,6 @@
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from ..models import User
 
@@ -29,6 +31,16 @@ class CreateUserSerializer(serializers.ModelSerializer):
         model = User
         fields = "__all__"
         extra_kwargs = {"password": {"write_only": True}}
+
+    def validate(self, attrs):
+        if attrs["password"] != attrs["confirm_password"]:
+            raise ValidationError({"password": "Password Fields must match."})
+        try:
+            validate_password(attrs["password"])
+        except ValidationError as valid_err:
+            raise serializers.ValidationError({"password": valid_err})
+
+        return attrs
 
     def create(self, validated_data):
         user = User(
