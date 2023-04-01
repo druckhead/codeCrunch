@@ -26,9 +26,9 @@ class CreatePostSerializer(serializers.ModelSerializer):
             description=validated_data["description"],
             post_type=validated_data["post_type"],
             job=validated_data["job"],
+            user=User.objects.get(pk=validated_data["user_id"]),
         )
         post.save()
-        post.users.add(validated_data["user_id"])
         return post
 
 
@@ -64,9 +64,9 @@ class CreatePostSolutionSerializer(serializers.ModelSerializer):
         post_solution = PostSolution(
             solution=validated_data["solution"],
             post=validated_data["post"],
+            user=User.objects.get(pk=validated_data["user_id"]),
         )
         post_solution.save()
-        post_solution.users.add(validated_data["user_id"])
         return post_solution
 
 
