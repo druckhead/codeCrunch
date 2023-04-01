@@ -31,9 +31,6 @@ class CreateJobSerializer(serializers.ModelSerializer):
         job.companies.add(validated_data["company_id"])
         return job
 
-    def save(self, **kwargs):
-        return super().save(**kwargs)
-
 
 class UpdateJobSerializer(serializers.ModelSerializer):
     company_ids = serializers.ListField(write_only=True)
