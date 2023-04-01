@@ -14,11 +14,9 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CreatePostSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(write_only=True)
-
     class Meta:
         model = Post
-        fields = ["title", "description", "post_type", "job", "user_id"]
+        fields = ["title", "description", "post_type", "job", "user"]
 
     def create(self, validated_data):
         post = Post(
@@ -26,7 +24,7 @@ class CreatePostSerializer(serializers.ModelSerializer):
             description=validated_data["description"],
             post_type=validated_data["post_type"],
             job=validated_data["job"],
-            user=User.objects.get(pk=validated_data["user_id"]),
+            user=validated_data["user"],
         )
         post.save()
         return post
@@ -54,17 +52,15 @@ class PostSolutionSerializer(serializers.ModelSerializer):
 
 
 class CreatePostSolutionSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(write_only=True)
-
     class Meta:
         model = PostSolution
-        fields = ["solution", "post", "user_id"]
+        fields = ["solution", "post", "user"]
 
     def create(self, validated_data):
         post_solution = PostSolution(
             solution=validated_data["solution"],
             post=validated_data["post"],
-            user=User.objects.get(pk=validated_data["user_id"]),
+            user=validated_data["user"],
         )
         post_solution.save()
         return post_solution
