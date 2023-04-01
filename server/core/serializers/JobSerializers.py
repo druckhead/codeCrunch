@@ -18,7 +18,9 @@ class CreateJobSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ["title", "seniority", "company_id"]
+        fields = "__all__"
+        read_only_fields = ["companies"]
+        write_only_fields = ["company_id"]
 
     def create(self, validated_data):
         job = Job(
