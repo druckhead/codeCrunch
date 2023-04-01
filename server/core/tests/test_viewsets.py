@@ -11,10 +11,12 @@ class UserViewSetTest(APITestCase):
     def setUpTestData(cls) -> None:
         cls.client = APIClient()
         cls.factory = APIRequestFactory()
-        cls.admin = User.objects.create_superuser(
+
+    def setUp(self) -> None:
+        self.admin = User.objects.create_superuser(
             username="admin", email="admin@admin.com", password="damndaniel"
         )
-        cls.user = User.objects.create_user(
+        self.user = User.objects.create_user(
             username="danielraz", email="danielraz@raz.com", password="damndaniel"
         )
 
@@ -95,7 +97,9 @@ class UserViewSetTest(APITestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.delete("/api/v1/users/" + str(self.user.id))
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT._value_)
-        self.assertEqual(1, len(User.objects.all()))
+        self.assertEqual(2, len(User.objects.all()))
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_active)
 
 
 class CompanyViewSetTest(APITestCase):
