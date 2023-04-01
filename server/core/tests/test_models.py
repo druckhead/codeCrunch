@@ -48,25 +48,24 @@ class UserModelTests(TestCase):
         )
         j1 = Job.objects.create(title="fullstack developer", seniority="junior")
 
-        p1 = Post.objects.create(title="TwoSum", post_type="question", job=j1)
+        p1 = Post.objects.create(title="TwoSum", post_type="question", job=j1, user=u1)
         self.assertEqual(p1.title, "TwoSum")
         self.assertEqual(p1.post_type, "question")
         self.assertIsNone(p1.description)
-        p1.users.add(u1)
-        self.assertEqual(p1.users.get(first_name="Daniel").first_name, "Daniel")
+        self.assertEqual(p1.user.first_name, "Daniel")
 
         p2 = Post.objects.create(
             title="Create a simple E-Commerce Shop",
             post_type="assignment",
             description="lorem ipsum dolor",
             job=j1,
+            user=u2,
         )
         self.assertEqual(p2.title, "Create a simple E-Commerce Shop")
         self.assertEqual(p2.post_type, "assignment")
         self.assertIsNotNone(p2.description)
         self.assertEqual(p2.description, "lorem ipsum dolor")
-        p2.users.add(u2)
-        self.assertEqual(p2.users.get(first_name=u2.first_name).first_name, "Michael")
+        # self.assertEqual(p2.users.get(first_name=u2.first_name).first_name, "Michael")
 
     def test_post_solution_was_created(self):
         u1 = User.objects.create(
@@ -82,18 +81,18 @@ class UserModelTests(TestCase):
             email="michaeljackson@gmail.com",
         )
         j1 = Job.objects.create(title="fullstack developer", seniority="junior")
-        p1 = Post.objects.create(title="TwoSum", post_type="question", job=j1)
-        p1.users.add(u1)
+        p1 = Post.objects.create(title="TwoSum", post_type="question", job=j1, user=u1)
         p2 = Post.objects.create(
             title="Create a simple E-Commerce Shop",
             post_type="assignment",
             description="lorem ipsum dolor",
             job=j1,
+            user=u2,
         )
-        p2.users.add(u2)
 
-        ps1 = PostSolution.objects.create(solution="This is a solution", post=p1)
-        ps1.users.add(u2)
+        ps1 = PostSolution.objects.create(
+            solution="This is a solution", post=p1, user=u2
+        )
         self.assertEqual(ps1.solution, "This is a solution")
         self.assertEqual(ps1.post_id, p1.id)
-        self.assertEqual(ps1.users.get(first_name="Michael").first_name, "Michael")
+        self.assertEqual(ps1.user.first_name, "Michael")

@@ -331,16 +331,16 @@ class PostViewSetTest(APITestCase):
             title="TwoSum",
             description="TwoSum Description",
             job=self.job,
+            user=self.user,
         )
-        self.post.users.add(self.user)
 
         self.post2 = Post.objects.create(
             post_type="assignment",
             title="Design Twitter",
             description="Design Twitter Assignment",
             job=self.job,
+            user=self.user,
         )
-        self.post2.users.add(self.user)
 
     def test_get_retrieve(self):
         self.client.force_authenticate(user=self.user)
@@ -430,25 +430,23 @@ class PostSolutionViewSetTest(APITestCase):
             title="TwoSum",
             description="TwoSum Description",
             job=cls.job,
+            user=cls.user,
         )
-        cls.post.users.add(cls.user)
         cls.post2 = Post.objects.create(
             post_type="assignment",
             title="Design Twitter",
             description="Design Twitter Assignment",
             job=cls.job,
+            user=cls.user,
         )
-        cls.post2.users.add(cls.user)
 
     def setUp(self) -> None:
         self.postsolution = PostSolution.objects.create(
-            solution="Solution for some post", post=self.post
+            solution="Solution for some post", post=self.post, user=self.user
         )
-        self.postsolution.users.add(self.user)
         self.postsolution2 = PostSolution.objects.create(
-            solution="Solution for some other post", post=self.post2
+            solution="Solution for some other post", post=self.post2, user=self.user
         )
-        self.postsolution2.users.add(self.user)
 
     def test_get_retrieve(self):
         self.client.force_authenticate(user=self.user)
