@@ -101,6 +101,12 @@ class UserViewSetTest(APITestCase):
         self.user.refresh_from_db()
         self.assertFalse(self.user.is_active)
 
+    def test_retrieve_after_delete(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.delete("/api/v1/users/" + str(self.user.id))
+        response_ret = self.client.get("/api/v1/users/" + str(self.user.id))
+        self.assertEqual(response_ret.status_code, HTTPStatus.NOT_FOUND._value_)
+
 
 class CompanyViewSetTest(APITestCase):
     @classmethod
