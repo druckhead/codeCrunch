@@ -31,9 +31,9 @@ class UserViewSet(viewsets.ModelViewSet):
         instance.save()
 
     def get_serializer_class(self):
-        if self.action in ("list", "retrieve"):
+        if self.action in ("list", "retrieve", "destroy", "update", "partial_update"):
             if self.request.user.is_superuser:
                 return serializers.AdminUserSerializer
             return serializers.UserSerializer
-        elif self.action in ("update", "partial_update", "create", "destroy"):
+        if self.action == "create":
             return serializers.CreateUserSerializer
