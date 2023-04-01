@@ -16,7 +16,7 @@ class PostSerializer(serializers.ModelSerializer):
 class CreatePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ["title", "description", "post_type", "job", "user"]
+        fields = "__all__"
 
     def create(self, validated_data):
         post = Post(
@@ -33,7 +33,8 @@ class CreatePostSerializer(serializers.ModelSerializer):
 class UpdatePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ["title", "description", "post_type", "job"]
+        fields = "__all__"
+        read_only_fields = ["user"]
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)
@@ -54,7 +55,7 @@ class PostSolutionSerializer(serializers.ModelSerializer):
 class CreatePostSolutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostSolution
-        fields = ["solution", "post", "user"]
+        fields = "__all__"
 
     def create(self, validated_data):
         post_solution = PostSolution(
@@ -69,7 +70,8 @@ class CreatePostSolutionSerializer(serializers.ModelSerializer):
 class UpdatePostSolutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostSolution
-        fields = ["solution"]
+        fields = "__all__"
+        read_only_fields = ["user", "post"]
 
     def update(self, instance, validated_data):
         instance.solution = validated_data.get("solution", instance.solution)
