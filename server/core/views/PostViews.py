@@ -26,8 +26,14 @@ class PostViewSet(viewsets.ModelViewSet):
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
+    def get_queryset(self):
+        if self.action == "list":
+            if not self.request.user.is_superuser:
+                return Post.objects.filter(user_id=self.request.user.id)
+        return super().get_queryset()
+
     def get_serializer_class(self):
-        if self.action in ("list", "retrieve"):
+        if self.action in ("list", "retrieve", "destroy"):
             return serializers.PostSerializer
         elif self.action == "create":
             return serializers.CreatePostSerializer
@@ -52,8 +58,14 @@ class PostSolutionViewSet(viewsets.ModelViewSet):
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
+    def get_queryset(self):
+        if self.action == "list":
+            if not self.request.user.is_superuser:
+                return PostSolution.objects.filter(user_id=self.request.user.id)
+        return super().get_queryset()
+
     def get_serializer_class(self):
-        if self.action in ("list", "retrieve"):
+        if self.action in ("list", "retrieve", "destroy"):
             return serializers.PostSolutionSerializer
         if self.action == "create":
             return serializers.CreatePostSolutionSerializer
