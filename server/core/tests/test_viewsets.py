@@ -295,6 +295,9 @@ class PostViewSetTest(APITestCase):
         cls.user = User.objects.create_superuser(
             username="admin", email="admin@admin.com", password="damndaniel"
         )
+        cls.user2 = User.objects.create_user(
+            username="daniel", email="daniel@daniel.com", password="damndaniel"
+        )
         cls.company = Company.objects.create(
             name="Apple Inc.", country="United States of America"
         )
@@ -318,7 +321,7 @@ class PostViewSetTest(APITestCase):
             title="Design Twitter",
             description="Design Twitter Assignment",
             job=self.job,
-            user=self.user,
+            user=self.user2,
         )
 
     def test_get_retrieve(self):
@@ -335,6 +338,11 @@ class PostViewSetTest(APITestCase):
         response = self.client.get("/api/v1/posts")
         self.assertEqual(response.status_code, HTTPStatus.OK._value_)
         self.assertEqual(len(response.data), 2)
+
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.get("/api/v1/posts")
+        self.assertEqual(response.status_code, HTTPStatus.OK._value_)
+        self.assertEqual(len(response.data), 1)
 
     def test_post_create(self):
         data = json.dumps(
@@ -396,6 +404,9 @@ class PostSolutionViewSetTest(APITestCase):
         cls.user = User.objects.create_superuser(
             username="admin", email="admin@admin.com", password="damndaniel"
         )
+        cls.user2 = User.objects.create_user(
+            username="daniel", email="daniel@daniel.com", password="damndaniel"
+        )
         cls.company = Company.objects.create(
             name="Apple Inc.", country="United States of America"
         )
@@ -416,7 +427,7 @@ class PostSolutionViewSetTest(APITestCase):
             title="Design Twitter",
             description="Design Twitter Assignment",
             job=cls.job,
-            user=cls.user,
+            user=cls.user2,
         )
 
     def setUp(self) -> None:
@@ -424,7 +435,7 @@ class PostSolutionViewSetTest(APITestCase):
             solution="Solution for some post", post=self.post, user=self.user
         )
         self.postsolution2 = PostSolution.objects.create(
-            solution="Solution for some other post", post=self.post2, user=self.user
+            solution="Solution for some other post", post=self.post2, user=self.user2
         )
 
     def test_get_retrieve(self):
@@ -442,6 +453,11 @@ class PostSolutionViewSetTest(APITestCase):
         self.assertEqual(2, len(response.data))
         self.assertEqual(response.data[0].get("id"), self.postsolution.id)
         self.assertEqual(response.data[1].get("id"), self.postsolution2.id)
+
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.get("/api/v1/post_solutions")
+        self.assertEqual(response.status_code, HTTPStatus.OK._value_)
+        self.assertEqual(1, len(response.data))
 
     def test_post_create(self):
         data = json.dumps(
