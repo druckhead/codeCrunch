@@ -12,6 +12,11 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import { useTheme } from "@mui/material";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import BrightnessAutoIcon from "@mui/icons-material/BrightnessAuto";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { ColorModeContext } from "../App";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -23,6 +28,9 @@ export default function NavBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+
+  const theme = useTheme();
+  const colorMode = React.useContext(ColorModeContext);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -96,11 +104,38 @@ export default function NavBar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography color={"inherit"} textAlign="center">
+                  <Typography color="inherit" textAlign="center">
                     {page}
                   </Typography>
                 </MenuItem>
               ))}
+              <Box
+                sx={{
+                  display: "flex",
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: "inherit",
+                  color: "text.primary",
+                  borderRadius: 1,
+                  p: 3,
+                }}
+              >
+                <IconButton
+                  sx={{ ml: 1 }}
+                  onClick={colorMode.toggleColorMode}
+                  color="inherit"
+                >
+                  {colorMode.getIsAutoMode() ? (
+                    <BrightnessAutoIcon />
+                  ) : theme.palette.mode === "light" ? (
+                    <LightModeIcon />
+                  ) : (
+                    <DarkModeIcon />
+                  )}
+                </IconButton>
+                {/* {theme.palette.mode} mode */}
+              </Box>
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
@@ -132,6 +167,36 @@ export default function NavBar() {
                 {page}
               </Button>
             ))}
+          </Box>
+
+          <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "inherit",
+                color: "text.primary",
+                borderRadius: 1,
+                p: 3,
+              }}
+            >
+              <IconButton
+                sx={{ ml: 1 }}
+                onClick={colorMode.toggleColorMode}
+                color="inherit"
+              >
+                {colorMode.getIsAutoMode() ? (
+                  <BrightnessAutoIcon />
+                ) : theme.palette.mode === "light" ? (
+                  <LightModeIcon />
+                ) : (
+                  <DarkModeIcon />
+                )}
+              </IconButton>
+              {/* {theme.palette.mode} mode */}
+            </Box>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>

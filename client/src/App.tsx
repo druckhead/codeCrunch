@@ -7,10 +7,19 @@ import Root from "./pages/Root";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 
-export default function App() {
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+export const ColorModeContext = React.createContext({
+  getIsAutoMode: (): boolean => {
+    return false;
+  },
+  toggleColorMode: () => {},
+});
 
-  const theme = React.useMemo(
+export default function App() {
+  const [mode, setMode] = React.useState<"light" | "dark">("dark");
+  const [isAutoMode, setIsAutoMode] = React.useState<boolean>(true);
+  const prefersDarkMode = useMediaQuery(`(prefers-color-scheme: dark)`);
+
+  const themeAuto = React.useMemo(
     () =>
       createTheme({
         palette: {
@@ -20,15 +29,53 @@ export default function App() {
     [prefersDarkMode]
   );
 
+  const colorMode = React.useMemo(
+    () => ({
+      getIsAutoMode: (): boolean => {
+        return isAutoMode;
+      },
+      toggleColorMode: () => {
+        setMode((prevMode) => {
+          if (isAutoMode) {
+            setIsAutoMode(false);
+            return "dark";
+          }
+          switch (prevMode) {
+            case "dark":
+              return "light";
+            case "light":
+              setIsAutoMode(true);
+              return "dark";
+            default:
+              return "dark";
+          }
+        });
+      },
+    }),
+    [isAutoMode]
+  );
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+        },
+      }),
+    [mode]
+  );
+
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Routes>
-        <Route path="/" element={<Root />}>
-          <Route index element={<HomePage />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </ThemeProvider>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={isAutoMode ? themeAuto : theme}>
+        <CssBaseline />
+        <Routes>
+          <Route path="/" element={<Root />}>
+            <Route index element={<HomePage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
