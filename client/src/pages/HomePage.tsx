@@ -1,5 +1,9 @@
 import React from "react";
 
 export default function HomePage() {
-  return <div>HomePage</div>;
+  return (
+    <React.Fragment>
+      <div>HomePage</div>
+    </React.Fragment>
+  );
 }
