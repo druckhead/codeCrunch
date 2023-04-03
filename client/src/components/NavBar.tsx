@@ -11,12 +11,13 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import { useTheme } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import BrightnessAutoIcon from "@mui/icons-material/BrightnessAuto";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import { ColorModeContext } from "../App";
+import { Link } from "react-router-dom";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -49,28 +50,31 @@ export default function NavBar() {
 
   return (
     <AppBar
-      position="static"
-      sx={{ backgroundColor: "inherit", color: "inherit" }}
+      sx={{
+        ...appbarStyles,
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+      }}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="/"
+            component="div"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
+              letterSpacing: ".25rem",
               color: "inherit",
               textDecoration: "none",
             }}
           >
-            LOGO
+            <Link to="/" style={{ color: "inherit" }}>
+              codeCrunch
+            </Link>
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -121,6 +125,14 @@ export default function NavBar() {
                   p: 3,
                 }}
               >
+                <Link
+                  to="https://github.com/druckhead/codeCrunch"
+                  style={{ color: "inherit" }}
+                >
+                  <IconButton sx={{ ml: 1 }} color="inherit">
+                    <GitHubIcon />
+                  </IconButton>
+                </Link>
                 <IconButton
                   sx={{ ml: 1 }}
                   onClick={colorMode.toggleColorMode}
@@ -134,28 +146,27 @@ export default function NavBar() {
                     <DarkModeIcon />
                   )}
                 </IconButton>
-                {/* {theme.palette.mode} mode */}
               </Box>
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href=""
+            component="div"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
+              letterSpacing: ".25rem",
               color: "inherit",
               textDecoration: "none",
             }}
           >
-            LOGO
+            <Link to="/" style={{ color: "inherit" }}>
+              codeCrunch
+            </Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
@@ -182,6 +193,14 @@ export default function NavBar() {
                 p: 3,
               }}
             >
+              <Link
+                to="https://github.com/druckhead/codeCrunch"
+                style={{ color: "inherit" }}
+              >
+                <IconButton sx={{ ml: 1 }} color="inherit">
+                  <GitHubIcon />
+                </IconButton>
+              </Link>
               <IconButton
                 sx={{ ml: 1 }}
                 onClick={colorMode.toggleColorMode}
@@ -195,7 +214,6 @@ export default function NavBar() {
                   <DarkModeIcon />
                 )}
               </IconButton>
-              {/* {theme.palette.mode} mode */}
             </Box>
           </Box>
 
@@ -233,3 +251,9 @@ export default function NavBar() {
     </AppBar>
   );
 }
+
+const appbarStyles = {
+  zIndex: 999,
+  position: "sticky",
+  top: 0,
+};
