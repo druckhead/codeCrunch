@@ -16,7 +16,8 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { ColorModeContext } from "../App";
 import { Link } from "react-router-dom";
-import CodeCrunchLogo from "../assets/react.svg";
+import CodeCrunchLogoLight from "../assets/logo-light.svg";
+import CodeCrunchLogoDark from "../assets/logo-dark.svg";
 
 const pages = ["Dashboard", "Profile", "Sign in"];
 
@@ -42,7 +43,7 @@ export default function NavBar() {
         color: theme.palette.text.primary,
       }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ backgroundColor: "inherit" }}>
         <Toolbar
           disableGutters
           sx={{
@@ -51,8 +52,15 @@ export default function NavBar() {
           }}
         >
           <Link to="/" style={{ color: "inherit" }}>
-            <Box component="div" display="flex" gap={2}>
-              <img src={CodeCrunchLogo} alt="company logo" />
+            <Box component="div" display="flex" gap={0.75}>
+              <img
+                src={
+                  theme.palette.mode === "dark"
+                    ? CodeCrunchLogoDark
+                    : CodeCrunchLogoLight
+                }
+                alt="company logo"
+              />
               <Typography
                 variant="h6"
                 noWrap
@@ -70,7 +78,13 @@ export default function NavBar() {
               </Typography>
             </Box>
           </Link>
-          <Box sx={{ flexGrow: 0, display: { xs: "flex", sm: "none" } }}>
+          <Box
+            sx={{
+              backgroundColor: theme.palette.background.default,
+              flexGrow: 0,
+              display: { xs: "flex", sm: "none" },
+            }}
+          >
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -82,11 +96,24 @@ export default function NavBar() {
               <MenuIcon />
             </IconButton>
             <Drawer anchor="left" open={open} onClose={handleDrawerClose}>
-              <Box sx={{ width: { xs: "75vw", sm: "40vw" } }}>
+              <Box
+                sx={{
+                  backgroundColor: "inherit",
+                  width: { xs: "75vw", sm: "40vw" },
+                  height: "100%",
+                }}
+              >
                 <Link to="/" style={{ color: "inherit" }}>
                   <Container sx={{ px: 1.5, py: 1.25 }}>
                     <Box component="div" display="flex" gap={2}>
-                      <img src={CodeCrunchLogo} alt="company logo" />
+                      <img
+                        src={
+                          theme.palette.mode === "dark"
+                            ? CodeCrunchLogoDark
+                            : CodeCrunchLogoLight
+                        }
+                        alt="company logo"
+                      />
                       <Typography
                         variant="h6"
                         noWrap
@@ -127,7 +154,7 @@ export default function NavBar() {
                   }}
                 >
                   <Link
-                    to="https://github.com/druckhead/codeCrunch"
+                    to="https://github.com/druckhead/"
                     style={{ color: "inherit" }}
                   >
                     <IconButton color="inherit" onClick={handleDrawerClose}>
@@ -179,7 +206,7 @@ export default function NavBar() {
             }}
           >
             <Link
-              to="https://github.com/druckhead/codeCrunch"
+              to="https://github.com/druckhead/"
               style={{ color: "inherit" }}
             >
               <IconButton color="inherit">
@@ -200,26 +227,4 @@ export default function NavBar() {
       </Container>
     </AppBar>
   );
-}
-
-{
-  /* <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-            </Menu> */
 }
