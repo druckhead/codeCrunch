@@ -9,7 +9,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import { useTheme } from "@mui/material";
+import { Divider, Drawer, useTheme } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import BrightnessAutoIcon from "@mui/icons-material/BrightnessAuto";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -18,23 +18,20 @@ import { ColorModeContext } from "../App";
 import { Link } from "react-router-dom";
 import CodeCrunchLogo from "../assets/react.svg";
 
-const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = ["Dashboard", "Profile", "Sign in"];
 
 export default function NavBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-
   const theme = useTheme();
   const colorMode = React.useContext(ColorModeContext);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
+  const [open, setOpen] = React.useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
+  const handleDrawerClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -46,7 +43,13 @@ export default function NavBar() {
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar
+          disableGutters
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "space-between", lg: "space-around" },
+          }}
+        >
           <Link to="/" style={{ color: "inherit" }}>
             <Box component="div" display="flex" gap={2}>
               <img src={CodeCrunchLogo} alt="company logo" />
@@ -55,8 +58,7 @@ export default function NavBar() {
                 noWrap
                 component="div"
                 sx={{
-                  mr: 2,
-                  display: { xs: "none", md: "flex" },
+                  display: { xs: "none", lg: "flex" },
                   fontFamily: "monospace",
                   fontWeight: 700,
                   letterSpacing: ".25rem",
@@ -68,24 +70,140 @@ export default function NavBar() {
               </Typography>
             </Box>
           </Link>
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "flex", md: "none" },
-            }}
-          />
-          <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "none" } }}>
+          <Box sx={{ flexGrow: 0, display: { xs: "flex", sm: "none" } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              onClick={handleOpenNavMenu}
+              onClick={handleDrawerOpen}
               color="inherit"
             >
               <MenuIcon />
             </IconButton>
-            <Menu
+            <Drawer anchor="left" open={open} onClose={handleDrawerClose}>
+              <Box sx={{ width: { xs: "75vw", sm: "40vw" } }}>
+                <Link to="/" style={{ color: "inherit" }}>
+                  <Container sx={{ px: 1.5, py: 1.25 }}>
+                    <Box component="div" display="flex" gap={2}>
+                      <img src={CodeCrunchLogo} alt="company logo" />
+                      <Typography
+                        variant="h6"
+                        noWrap
+                        component="div"
+                        sx={{
+                          mr: 2,
+                          display: "flex",
+                          fontFamily: "monospace",
+                          fontWeight: 500,
+                          letterSpacing: ".1rem",
+                          color: "inherit",
+                          textDecoration: "none",
+                        }}
+                      >
+                        codeCrunch
+                      </Typography>
+                    </Box>
+                  </Container>
+                </Link>
+                {pages.map((page) => (
+                  <MenuItem key={page} onClick={handleDrawerClose}>
+                    <Typography color="inherit" textAlign="center">
+                      {page}
+                    </Typography>
+                  </MenuItem>
+                ))}
+                <Divider />
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: "unset",
+                    color: "text.primary",
+                    borderRadius: 1,
+                    p: 3,
+                  }}
+                >
+                  <Link
+                    to="https://github.com/druckhead/codeCrunch"
+                    style={{ color: "inherit" }}
+                  >
+                    <IconButton color="inherit" onClick={handleDrawerClose}>
+                      <GitHubIcon />
+                    </IconButton>
+                  </Link>
+                  <IconButton
+                    onClick={colorMode.toggleColorMode}
+                    color="inherit"
+                  >
+                    {colorMode.getIsAutoMode() ? (
+                      <BrightnessAutoIcon />
+                    ) : theme.palette.mode === "light" ? (
+                      <LightModeIcon />
+                    ) : (
+                      <DarkModeIcon />
+                    )}
+                  </IconButton>
+                </Box>
+              </Box>
+            </Drawer>
+          </Box>
+
+          <Box
+            sx={{ flexGrow: 0, display: { xs: "none", sm: "flex" }, gap: 2 }}
+          >
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleDrawerClose}
+                sx={{
+                  my: 2,
+                  fontWeight: 600,
+                  color: "inherit",
+                  display: "block",
+                }}
+              >
+                {page}
+              </Button>
+            ))}
+          </Box>
+          <Box
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              bgcolor: "inherit",
+              color: "text.primary",
+              borderRadius: 1,
+              flexGrow: 0,
+            }}
+          >
+            <Link
+              to="https://github.com/druckhead/codeCrunch"
+              style={{ color: "inherit" }}
+            >
+              <IconButton color="inherit">
+                <GitHubIcon />
+              </IconButton>
+            </Link>
+            <IconButton onClick={colorMode.toggleColorMode} color="inherit">
+              {colorMode.getIsAutoMode() ? (
+                <BrightnessAutoIcon />
+              ) : theme.palette.mode === "light" ? (
+                <LightModeIcon />
+              ) : (
+                <DarkModeIcon />
+              )}
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
+}
+
+{
+  /* <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
@@ -103,100 +221,5 @@ export default function NavBar() {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography color="inherit" textAlign="center">
-                    {page}
-                  </Typography>
-                </MenuItem>
-              ))}
-              <Box
-                sx={{
-                  display: "flex",
-                  width: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  bgcolor: "inherit",
-                  color: "text.primary",
-                  borderRadius: 1,
-                  p: 3,
-                }}
-              >
-                <Link
-                  to="https://github.com/druckhead/codeCrunch"
-                  style={{ color: "inherit" }}
-                >
-                  <IconButton sx={{ ml: 1 }} color="inherit">
-                    <GitHubIcon />
-                  </IconButton>
-                </Link>
-                <IconButton
-                  sx={{ ml: 1 }}
-                  onClick={colorMode.toggleColorMode}
-                  color="inherit"
-                >
-                  {colorMode.getIsAutoMode() ? (
-                    <BrightnessAutoIcon />
-                  ) : theme.palette.mode === "light" ? (
-                    <LightModeIcon />
-                  ) : (
-                    <DarkModeIcon />
-                  )}
-                </IconButton>
-              </Box>
-            </Menu>
-          </Box>
-
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "inherit", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
-
-          <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
-            <Box
-              sx={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                bgcolor: "inherit",
-                color: "text.primary",
-                borderRadius: 1,
-                p: 3,
-              }}
-            >
-              <Link
-                to="https://github.com/druckhead/codeCrunch"
-                style={{ color: "inherit" }}
-              >
-                <IconButton sx={{ ml: 1 }} color="inherit">
-                  <GitHubIcon />
-                </IconButton>
-              </Link>
-              <IconButton
-                sx={{ ml: 1 }}
-                onClick={colorMode.toggleColorMode}
-                color="inherit"
-              >
-                {colorMode.getIsAutoMode() ? (
-                  <BrightnessAutoIcon />
-                ) : theme.palette.mode === "light" ? (
-                  <LightModeIcon />
-                ) : (
-                  <DarkModeIcon />
-                )}
-              </IconButton>
-            </Box>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
-  );
+            </Menu> */
 }
