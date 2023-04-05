@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
@@ -18,8 +17,12 @@ import { ColorModeContext } from "../App";
 import { Link } from "react-router-dom";
 import CodeCrunchLogoLight from "../assets/logo-light.svg";
 import CodeCrunchLogoDark from "../assets/logo-dark.svg";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import LoginIcon from "@mui/icons-material/Login";
 
 const pages = ["Dashboard", "Profile", "Sign in"];
+const pagesIcons = [<DashboardIcon />, <AccountBoxIcon />, <LoginIcon />];
 
 export default function NavBar() {
   const theme = useTheme();
@@ -119,7 +122,6 @@ export default function NavBar() {
                         noWrap
                         component="div"
                         sx={{
-                          mr: 2,
                           display: "flex",
                           fontFamily: "monospace",
                           fontWeight: 500,
@@ -133,38 +135,19 @@ export default function NavBar() {
                     </Box>
                   </Container>
                 </Link>
-                {pages.map((page) => (
+                {pages.map((page, index) => (
                   <MenuItem key={page} onClick={handleDrawerClose}>
-                    <Typography color="inherit" textAlign="center">
-                      {page}
-                    </Typography>
+                    <Box display="flex" gap={1}>
+                      {pagesIcons[index]}
+                      <Typography color="inherit" textAlign="center">
+                        {page}
+                      </Typography>
+                    </Box>
                   </MenuItem>
                 ))}
                 <Divider />
-                <Box
-                  sx={{
-                    display: "flex",
-                    width: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "unset",
-                    color: "text.primary",
-                    borderRadius: 1,
-                    p: 3,
-                  }}
-                >
-                  <Link
-                    to="https://github.com/druckhead/"
-                    style={{ color: "inherit" }}
-                  >
-                    <IconButton color="inherit" onClick={handleDrawerClose}>
-                      <GitHubIcon />
-                    </IconButton>
-                  </Link>
-                  <IconButton
-                    onClick={colorMode.toggleColorMode}
-                    color="inherit"
-                  >
+                <MenuItem onClick={colorMode.toggleColorMode}>
+                  <Box display="flex" gap={1}>
                     {colorMode.getIsAutoMode() ? (
                       <BrightnessAutoIcon />
                     ) : theme.palette.mode === "light" ? (
@@ -172,8 +155,25 @@ export default function NavBar() {
                     ) : (
                       <DarkModeIcon />
                     )}
-                  </IconButton>
-                </Box>
+                    <Typography color="inherit" textAlign="center">
+                      Theme
+                    </Typography>
+                  </Box>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleDrawerClose}>
+                  <Link
+                    to="https://github.com/druckhead/"
+                    style={{ color: "inherit" }}
+                  >
+                    <Box display="flex" gap={1}>
+                      <GitHubIcon />
+                      <Typography color="inherit" textAlign="center">
+                        Github
+                      </Typography>
+                    </Box>
+                  </Link>
+                </MenuItem>
               </Box>
             </Drawer>
           </Box>
