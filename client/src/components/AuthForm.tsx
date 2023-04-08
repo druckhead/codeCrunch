@@ -1,4 +1,13 @@
-import { Box, Button, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import React, { useState } from "react";
 
 interface defaultSignupValues {
@@ -16,6 +25,7 @@ interface defaultSigninValues {
 }
 
 export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
+  const [showPassword, setShowPassword] = useState(false);
   const [loginFormValues, setLoginFormValues] = useState<defaultSigninValues>({
     username: "",
     password: "",
@@ -29,6 +39,10 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
       password: "",
       confirm_password: "",
     });
+
+  const handleShowPassword = (event: React.MouseEvent) => {
+    setShowPassword((preValue) => !preValue);
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -55,11 +69,15 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
             <SigninForm
               loginFormValues={loginFormValues}
               setLoginFormValues={setLoginFormValues}
+              showPassword={showPassword}
+              showPasswordHandler={handleShowPassword}
             />
           ) : (
             <SignupForm
               registerFormValues={registerFormValues}
               setRegisterFormValues={setRegisterFormValues}
+              showPassword={showPassword}
+              showPasswordHandler={handleShowPassword}
             />
           )}
           <Grid item>
@@ -76,9 +94,16 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
 type signinForm = {
   loginFormValues: defaultSigninValues;
   setLoginFormValues: React.Dispatch<React.SetStateAction<defaultSigninValues>>;
+  showPassword: boolean;
+  showPasswordHandler: React.MouseEventHandler;
 };
 
-function SigninForm({ loginFormValues, setLoginFormValues }: signinForm) {
+function SigninForm({
+  loginFormValues,
+  setLoginFormValues,
+  showPassword,
+  showPasswordHandler,
+}: signinForm) {
   return (
     <React.Fragment>
       <Grid item>
@@ -99,12 +124,22 @@ function SigninForm({ loginFormValues, setLoginFormValues }: signinForm) {
           id="password-input"
           name="password"
           label="Password"
-          type="password"
+          type={!showPassword ? "password" : "text"}
           value={loginFormValues.password}
           onChange={(e) => {
             const { name, value } = e.target;
             setLoginFormValues({ ...loginFormValues, [name]: value });
           }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={showPasswordHandler}>
+                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          fullWidth={true}
         />
       </Grid>
     </React.Fragment>
@@ -112,6 +147,8 @@ function SigninForm({ loginFormValues, setLoginFormValues }: signinForm) {
 }
 
 type signupForm = {
+  showPassword: boolean;
+  showPasswordHandler: React.MouseEventHandler;
   registerFormValues: defaultSignupValues;
   setRegisterFormValues: React.Dispatch<
     React.SetStateAction<{
@@ -125,7 +162,12 @@ type signupForm = {
   >;
 };
 
-function SignupForm({ registerFormValues, setRegisterFormValues }: signupForm) {
+function SignupForm({
+  registerFormValues,
+  setRegisterFormValues,
+  showPassword,
+  showPasswordHandler,
+}: signupForm) {
   return (
     <React.Fragment>
       <Grid item>
@@ -185,11 +227,20 @@ function SignupForm({ registerFormValues, setRegisterFormValues }: signupForm) {
           id="password-input"
           name="password"
           label="Password"
-          type="password"
+          type={!showPassword ? "password" : "text"}
           value={registerFormValues.password}
           onChange={(e) => {
             const { name, value } = e.target;
             setRegisterFormValues({ ...registerFormValues, [name]: value });
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={showPasswordHandler}>
+                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
         />
       </Grid>
@@ -198,11 +249,20 @@ function SignupForm({ registerFormValues, setRegisterFormValues }: signupForm) {
           id="confirm-password-input"
           name="confirm_password"
           label="Confirm Password"
-          type="password"
+          type={!showPassword ? "password" : "text"}
           value={registerFormValues.confirm_password}
           onChange={(e) => {
             const { name, value } = e.target;
             setRegisterFormValues({ ...registerFormValues, [name]: value });
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={showPasswordHandler}>
+                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
         />
       </Grid>
