@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -14,14 +14,21 @@ import BrightnessAutoIcon from "@mui/icons-material/BrightnessAuto";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { ColorModeContext } from "../App";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CodeCrunchLogoLight from "../assets/logo-light.svg";
 import CodeCrunchLogoDark from "../assets/logo-dark.svg";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { User, useUser } from "../context/UserContext";
+import {
+  USER_ACTIONS,
+  User,
+  useUser,
+  useUserDispactch,
+} from "../context/UserContext";
+import axios from "axios";
+import { API_ENDPOINTS } from "../utils/endpointConstants";
 
 const pages = ["Dashboard", "Profile", "Sign in", "Sign out"];
 const pagesIcons = [
@@ -36,6 +43,8 @@ export default function NavBar() {
   const colorMode = React.useContext(ColorModeContext);
   const [open, setOpen] = React.useState(false);
   const user = useUser();
+  const userDispatch = useUserDispactch();
+  const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -44,6 +53,26 @@ export default function NavBar() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const handleSignOut = (event: React.MouseEvent) => {
+    const logout = async () => {
+      const response = await axios.post(API_ENDPOINTS.AUTH.LOGOUT, {
+        refresh: user.refreshToken,
+      });
+      userDispatch({
+        type: USER_ACTIONS.BLACKLIST,
+        payload: { refreshToken: user.refreshToken },
+      });
+    };
+    logout();
+    handleDrawerClose();
+  };
+
+  useEffect(() => {
+    if (!user.isLoggedIn) {
+      navigate("/sign_in");
+    }
+  }, [user.isLoggedIn]);
 
   function navigationPage(
     user: User,
@@ -64,7 +93,7 @@ export default function NavBar() {
           style={{ color: theme.palette.text.primary }}
         >
           <Button
-            onClick={handleDrawerClose}
+            onClick={page === "Sign out" ? handleSignOut : handleDrawerClose}
             sx={{
               my: 2,
               fontWeight: 600,
@@ -78,7 +107,10 @@ export default function NavBar() {
       );
     } else {
       return (
-        <MenuItem key={page} onClick={handleDrawerClose}>
+        <MenuItem
+          key={page}
+          onClick={page === "Sign out" ? handleSignOut : handleDrawerClose}
+        >
           <Link
             to={page.replace(" ", "_").toLowerCase()}
             style={{ color: theme.palette.text.primary }}
