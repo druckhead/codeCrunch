@@ -50,13 +50,14 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
   };
 
   return (
-    <Box p={2}>
+    <Box p={2} display="grid" sx={{ placeItems: "center" }}>
       <Box
         component="form"
         onSubmit={handleSubmit}
         border={1}
-        p={4}
+        py={4}
         borderRadius={3}
+        sx={{ width: { xs: "100%", sm: "50%" } }}
       >
         <Grid
           container
