@@ -4,7 +4,7 @@ import AuthForm from "../components/AuthForm";
 import { Link } from "react-router-dom";
 
 export default function AuthPage() {
-  const [isSignIn, setIsSignIn] = useState(false);
+  const [isSignIn, setIsSignIn] = useState(true);
   const theme = useTheme();
 
   return (
