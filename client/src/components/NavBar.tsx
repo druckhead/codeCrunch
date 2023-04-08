@@ -59,7 +59,7 @@ export default function NavBar() {
     if (type === "navbar") {
       return (
         <Link
-          to={page.replace(" ", "").toLowerCase()}
+          to={page.replace(" ", "_").toLowerCase()}
           key={page}
           style={{ color: theme.palette.text.primary }}
         >
@@ -80,7 +80,7 @@ export default function NavBar() {
       return (
         <MenuItem key={page} onClick={handleDrawerClose}>
           <Link
-            to={page.replace(" ", "").toLowerCase()}
+            to={page.replace(" ", "_").toLowerCase()}
             style={{ color: theme.palette.text.primary }}
           >
             <Box display="flex" gap={1}>
