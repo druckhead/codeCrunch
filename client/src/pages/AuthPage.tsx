@@ -1,10 +1,13 @@
-import { Box, Container, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import AuthForm from "../components/AuthForm";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function AuthPage() {
-  const [isSignIn, setIsSignIn] = useState(true);
+  const location = useLocation();
+  const pathName = location.pathname;
+  const isSignInDefault = pathName === "/sign_in" ? true : false;
+  const [isSignIn, setIsSignIn] = useState(isSignInDefault);
   const theme = useTheme();
 
   return (
