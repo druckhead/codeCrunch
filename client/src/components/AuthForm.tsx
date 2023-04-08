@@ -81,7 +81,11 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
             />
           )}
           <Grid item>
-            <Button variant="contained" color="success" sx={{ px: 9 }}>
+            <Button
+              variant="contained"
+              color="success"
+              sx={{ width: { xs: 200, sm: 248 } }}
+            >
               Sign {isSignIn ? "in" : "up"}
             </Button>
           </Grid>
@@ -117,6 +121,7 @@ function SigninForm({
             const { name, value } = e.target;
             setLoginFormValues({ ...loginFormValues, [name]: value });
           }}
+          sx={{ width: { xs: 200, sm: 248 } }}
         />
       </Grid>
       <Grid item>
@@ -139,6 +144,7 @@ function SigninForm({
               </InputAdornment>
             ),
           }}
+          sx={{ width: { xs: 200, sm: 248 } }}
         />
       </Grid>
     </React.Fragment>
@@ -180,6 +186,7 @@ function SignupForm({
             const { name, value } = e.target;
             setRegisterFormValues({ ...registerFormValues, [name]: value });
           }}
+          sx={{ width: { xs: 200, sm: 248 } }}
         />
       </Grid>
       <Grid item>
@@ -193,6 +200,7 @@ function SignupForm({
             const { name, value } = e.target;
             setRegisterFormValues({ ...registerFormValues, [name]: value });
           }}
+          sx={{ width: { xs: 200, sm: 248 } }}
         />
       </Grid>
       <Grid item>
@@ -206,6 +214,7 @@ function SignupForm({
             const { name, value } = e.target;
             setRegisterFormValues({ ...registerFormValues, [name]: value });
           }}
+          sx={{ width: { xs: 200, sm: 248 } }}
         />
       </Grid>
       <Grid item>
@@ -219,6 +228,7 @@ function SignupForm({
             const { name, value } = e.target;
             setRegisterFormValues({ ...registerFormValues, [name]: value });
           }}
+          sx={{ width: { xs: 200, sm: 248 } }}
         />
       </Grid>
       <Grid item>
@@ -232,6 +242,7 @@ function SignupForm({
             const { name, value } = e.target;
             setRegisterFormValues({ ...registerFormValues, [name]: value });
           }}
+          sx={{ width: { xs: 200, sm: 248 } }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -254,6 +265,7 @@ function SignupForm({
             const { name, value } = e.target;
             setRegisterFormValues({ ...registerFormValues, [name]: value });
           }}
+          sx={{ width: { xs: 200, sm: 248 } }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
