@@ -2,7 +2,7 @@ import React from "react";
 
 type Nullable<T> = T | null | undefined;
 
-interface User {
+export interface User {
   id: Nullable<number>;
   username: Nullable<string>;
   firstName: Nullable<string>;
@@ -11,6 +11,7 @@ interface User {
   isStaff: Nullable<boolean>;
   accessToken: Nullable<string>;
   refreshToken: Nullable<string>;
+  isLoggedIn: boolean;
 }
 
 export enum USER_ACTIONS {
@@ -33,6 +34,7 @@ const INITIAL_USER_STATE: User = {
   isStaff: null,
   accessToken: null,
   refreshToken: null,
+  isLoggedIn: false,
 };
 
 function userReducer(userState: User, action: UserAction): User {
@@ -47,6 +49,7 @@ function userReducer(userState: User, action: UserAction): User {
         isStaff: action.payload.isStaff,
         accessToken: action.payload.accessToken,
         refreshToken: action.payload.refreshToken,
+        isLoggedIn: true,
       };
     }
     case USER_ACTIONS.BLACKLIST: {

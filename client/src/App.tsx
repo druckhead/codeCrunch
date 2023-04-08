@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import Root from "./pages/Root";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
+import AuthPage from "./pages/AuthPage";
 
 export const ColorModeContext = React.createContext({
   getIsAutoMode: (): boolean => {
@@ -72,6 +73,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Root />}>
             <Route index element={<HomePage />} />
+            <Route path="signin" element={<AuthPage />} />
+            <Route path="signout" element={<AuthPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

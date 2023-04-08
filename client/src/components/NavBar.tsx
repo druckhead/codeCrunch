@@ -20,15 +20,24 @@ import CodeCrunchLogoDark from "../assets/logo-dark.svg";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { User, useUser } from "../context/UserContext";
 
-const pages = ["Dashboard", "Profile", "Sign in"];
-const pagesIcons = [<DashboardIcon />, <AccountBoxIcon />, <LoginIcon />];
+const pages = ["Dashboard", "Profile", "Sign in", "Sign out"];
+const pagesIcons = [
+  <DashboardIcon />,
+  <AccountBoxIcon />,
+  <LoginIcon />,
+  <LogoutIcon />,
+];
 
 export default function NavBar() {
   const theme = useTheme();
   const colorMode = React.useContext(ColorModeContext);
-
   const [open, setOpen] = React.useState(false);
+  const user = useUser();
+
+  console.log(user);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -38,15 +47,68 @@ export default function NavBar() {
     setOpen(false);
   };
 
+  function navigationPage(
+    user: User,
+    page: string,
+    type: string,
+    index?: number
+  ) {
+    if (user.isLoggedIn) {
+      if (page === "Sign in") return null;
+    } else {
+      if (page === "Sign out") return null;
+    }
+    if (type === "navbar") {
+      return (
+        <Link
+          to={page.replace(" ", "").toLowerCase()}
+          key={page}
+          style={{ color: theme.palette.text.primary }}
+        >
+          <Button
+            onClick={handleDrawerClose}
+            sx={{
+              my: 2,
+              fontWeight: 600,
+              color: "inherit",
+              display: "block",
+            }}
+          >
+            {page}
+          </Button>
+        </Link>
+      );
+    } else {
+      return (
+        <MenuItem key={page} onClick={handleDrawerClose}>
+          <Link
+            to={page.toLowerCase()}
+            style={{ color: theme.palette.text.primary }}
+          >
+            <Box display="flex" gap={1}>
+              {pagesIcons[index!]}
+              <Typography color="inherit" textAlign="center">
+                {page}
+              </Typography>
+            </Box>
+          </Link>
+        </MenuItem>
+      );
+    }
+  }
+
   return (
     <AppBar
       position="static"
       sx={{
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: "inherit",
         color: theme.palette.text.primary,
       }}
     >
-      <Container maxWidth="xl" sx={{ backgroundColor: "inherit" }}>
+      <Container
+        maxWidth={false}
+        sx={{ backgroundColor: theme.palette.background.default }}
+      >
         <Toolbar
           disableGutters
           sx={{
@@ -106,7 +168,11 @@ export default function NavBar() {
                   height: "100%",
                 }}
               >
-                <Link to="/" style={{ color: "inherit" }}>
+                <Link
+                  to="/"
+                  style={{ color: "inherit" }}
+                  onClick={handleDrawerClose}
+                >
                   <Container sx={{ px: 1.5, py: 1.25 }}>
                     <Box component="div" display="flex" gap={2}>
                       <img
@@ -135,16 +201,9 @@ export default function NavBar() {
                     </Box>
                   </Container>
                 </Link>
-                {pages.map((page, index) => (
-                  <MenuItem key={page} onClick={handleDrawerClose}>
-                    <Box display="flex" gap={1}>
-                      {pagesIcons[index]}
-                      <Typography color="inherit" textAlign="center">
-                        {page}
-                      </Typography>
-                    </Box>
-                  </MenuItem>
-                ))}
+                {pages.map((page, index) =>
+                  navigationPage(user, page, "drawer", index)
+                )}
                 <Divider />
                 <MenuItem onClick={colorMode.toggleColorMode}>
                   <Box display="flex" gap={1}>
@@ -181,21 +240,9 @@ export default function NavBar() {
           <Box
             sx={{ flexGrow: 0, display: { xs: "none", sm: "flex" }, gap: 2 }}
           >
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleDrawerClose}
-                sx={{
-                  my: 2,
-                  fontWeight: 600,
-                  color: "inherit",
-                  display: "block",
-                }}
-              >
-                {page}
-              </Button>
-            ))}
+            {pages.map((page) => navigationPage(user, page, "navbar"))}
           </Box>
+
           <Box
             sx={{
               display: { xs: "none", sm: "flex" },
