@@ -2,11 +2,12 @@ import React from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Root from "./pages/Root";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
+import { useUser } from "./context/UserContext";
 
 export const ColorModeContext = React.createContext({
   getIsAutoMode: (): boolean => {
@@ -19,7 +20,7 @@ export default function App() {
   const [mode, setMode] = React.useState<"light" | "dark">("dark");
   const [isAutoMode, setIsAutoMode] = React.useState<boolean>(true);
   const prefersDarkMode = useMediaQuery(`(prefers-color-scheme: dark)`);
-
+  const user = useUser();
   const themeAuto = React.useMemo(
     () =>
       createTheme({
@@ -65,6 +66,7 @@ export default function App() {
       }),
     [mode]
   );
+  console.log(user.isLoggedIn);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -73,9 +75,12 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Root />}>
             <Route index element={<HomePage />} />
-            <Route path="sign_in" element={<AuthPage />} />
-            <Route path="sign_up" element={<AuthPage />} />
-            <Route path="signout" element={<AuthPage />} />
+            <Route
+              path="/sign_in"
+              element={user.isLoggedIn ? <Navigate to="/" /> : <AuthPage />}
+            />
+            <Route path="/sign_up" element={<AuthPage />} />
+            <Route path="/sign_out" element={<Navigate to="/sign_in" />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
