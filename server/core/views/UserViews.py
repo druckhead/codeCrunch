@@ -2,6 +2,7 @@ from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from ..models import User
 from ..permissions.userpermissions import UserPermissions
@@ -13,6 +14,21 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [UserPermissions]
     serializer_class = serializers.UserSerializer
     authentication_classes = [JWTAuthentication]
+
+    def perform_create(self, serializer):
+        return serializer.save()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.perform_create(serializer)
+        refresh = RefreshToken.for_user(user)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            {"refresh": str(refresh), "access": str(refresh.access_token)},
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
