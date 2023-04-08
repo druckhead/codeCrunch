@@ -99,7 +99,7 @@ function SigninForm({ loginFormValues, setLoginFormValues }: signinForm) {
           id="password-input"
           name="password"
           label="Password"
-          type="text"
+          type="password"
           value={loginFormValues.password}
           onChange={(e) => {
             const { name, value } = e.target;
@@ -185,7 +185,7 @@ function SignupForm({ registerFormValues, setRegisterFormValues }: signupForm) {
           id="password-input"
           name="password"
           label="Password"
-          type="text"
+          type="password"
           value={registerFormValues.password}
           onChange={(e) => {
             const { name, value } = e.target;
@@ -198,7 +198,7 @@ function SignupForm({ registerFormValues, setRegisterFormValues }: signupForm) {
           id="confirm-password-input"
           name="confirm_password"
           label="Confirm Password"
-          type="text"
+          type="password"
           value={registerFormValues.confirm_password}
           onChange={(e) => {
             const { name, value } = e.target;
