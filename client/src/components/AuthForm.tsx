@@ -9,6 +9,14 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import React, { useState } from "react";
+import {
+  USER_ACTIONS,
+  useUser,
+  useUserDispactch,
+} from "../context/UserContext";
+import axios from "axios";
+import { API_ENDPOINTS } from "../utils/endpointConstants";
+import { useLocalStorage } from "usehooks-ts";
 
 interface defaultSignupValues {
   first_name: string;
@@ -25,6 +33,8 @@ interface defaultSigninValues {
 }
 
 export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
+  const [refreshToken, setRefreshToken] = useLocalStorage("refresh", null);
+
   const [showPassword, setShowPassword] = useState(false);
   const [loginFormValues, setLoginFormValues] = useState<defaultSigninValues>({
     username: "",
@@ -39,21 +49,47 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
       password: "",
       confirm_password: "",
     });
+  const user = useUser();
+  const userDispatch = useUserDispactch();
 
   const handleShowPassword = (event: React.MouseEvent) => {
     setShowPassword((preValue) => !preValue);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (
+    event: React.FormEvent,
+    type: "sign_in" | "sign_up"
+  ) => {
     event.preventDefault();
-    // send to server
+    if (type === "sign_in") {
+      const getLoginTokens = async () => {
+        const response = await axios.post(
+          API_ENDPOINTS.AUTH.LOGIN,
+          loginFormValues
+        );
+        userDispatch({
+          type: USER_ACTIONS.LOGIN,
+          payload: {
+            accessToken: response.data.access,
+            refreshToken: response.data.refresh,
+          },
+        });
+        setRefreshToken(response.data.refresh);
+      };
+      getLoginTokens();
+    } else {
+      console.log(registerFormValues);
+      // TODO SEND REGISTER TO SERVER
+    }
   };
 
   return (
     <Box p={2} display="grid" sx={{ placeItems: "center" }}>
       <Box
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={(event) =>
+          handleSubmit(event, isSignIn ? "sign_in" : "sign_up")
+        }
         border={1}
         py={4}
         borderRadius={3}
@@ -85,6 +121,7 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
             <Button
               variant="contained"
               color="success"
+              type="submit"
               sx={{ width: { xs: 200, sm: 248 } }}
             >
               Sign {isSignIn ? "in" : "up"}
