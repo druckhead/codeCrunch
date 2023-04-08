@@ -37,8 +37,6 @@ export default function NavBar() {
   const [open, setOpen] = React.useState(false);
   const user = useUser();
 
-  console.log(user);
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
