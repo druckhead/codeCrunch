@@ -20,22 +20,33 @@ export default function AuthPage() {
         {`Sign ${isSignIn ? "in to your account" : "up for free"}`}
       </Typography>
       <Typography component="div" color="inherit" noWrap textAlign="center">
-        <Link
-          to=""
-          onClick={(e) => {
-            setIsSignIn((prevValue) => !prevValue);
-          }}
-        >
-          <Box display="flex" justifyContent="center">
-            <Typography fontWeight={600} color="#ff9832">
-              <Typography component="span" color={theme.palette.text.primary}>
-                or
-              </Typography>
-              {" Sign"} {isSignIn ? "up " : "in "}
-              {isSignIn ? "for a new" : "to your existing"} account
+        <Box display="flex" justifyContent="center">
+          <Box component="div">
+            <Typography component="span" color={theme.palette.text.primary}>
+              or
             </Typography>
+            <Link
+              to={isSignIn ? "../sign_up" : "../sign_in"}
+              onClick={(e) => {
+                setIsSignIn((prevValue) => !prevValue);
+              }}
+            >
+              <Typography
+                component="span"
+                color="#ffa94c"
+                fontWeight={600}
+                sx={{
+                  ":hover": {
+                    color: "#ff9832",
+                  },
+                }}
+              >
+                {" Sign"} {isSignIn ? "up " : "in "}
+                {isSignIn ? "for a new" : "to your existing"} account
+              </Typography>
+            </Link>
           </Box>
-        </Link>
+        </Box>
       </Typography>
       <AuthForm isSignIn={isSignIn} />
     </Box>
