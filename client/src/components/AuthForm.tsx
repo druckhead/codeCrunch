@@ -139,7 +139,6 @@ function SigninForm({
               </InputAdornment>
             ),
           }}
-          fullWidth={true}
         />
       </Grid>
     </React.Fragment>
