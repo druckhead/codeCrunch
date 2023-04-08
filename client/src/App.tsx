@@ -73,7 +73,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Root />}>
             <Route index element={<HomePage />} />
-            <Route path="signin" element={<AuthPage />} />
+            <Route path="sign_in" element={<AuthPage />} />
+            <Route path="sign_up" element={<AuthPage />} />
             <Route path="signout" element={<AuthPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
