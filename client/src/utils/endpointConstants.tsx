@@ -1,8 +1,11 @@
-const BASE_API_URL = "http://127.0.0.1";
+const BASE_API_LOCALHOST_URL = "http://127.0.0.1";
+const BASE_API_IP_URL = import.meta.env.VITE_MY_IP;
+
 const BASE_API_PORT = ":8000/";
 const BASE_API_ENDPOINT = "api/";
 const BASE_API_VERSION = "v1/";
-const FULL_API_ENDPOINT = BASE_API_URL + BASE_API_PORT + BASE_API_ENDPOINT;
+const FULL_API_ENDPOINT =
+  BASE_API_LOCALHOST_URL + BASE_API_PORT + BASE_API_ENDPOINT;
 
 const TOKEN = "token/";
 const USERS = "users";
