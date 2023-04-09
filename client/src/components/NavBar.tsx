@@ -14,7 +14,7 @@ import BrightnessAutoIcon from "@mui/icons-material/BrightnessAuto";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { ColorModeContext } from "../App";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import CodeCrunchLogoLight from "../assets/logo-light.svg";
 import CodeCrunchLogoDark from "../assets/logo-dark.svg";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -44,6 +44,7 @@ export default function NavBar() {
   const [open, setOpen] = React.useState(false);
   const user = useUser();
   const userDispatch = useUserDispactch();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
@@ -70,7 +71,9 @@ export default function NavBar() {
 
   useEffect(() => {
     if (!user.isLoggedIn) {
-      navigate("/sign_in");
+      if (location.pathname === "/sign_out") {
+        navigate("/sign_in");
+      }
     }
   }, [user.isLoggedIn]);
 
@@ -107,13 +110,13 @@ export default function NavBar() {
       );
     } else {
       return (
-        <MenuItem
-          key={page}
-          onClick={page === "Sign out" ? handleSignOut : handleDrawerClose}
+        <Link
+          to={page.replace(" ", "_").toLowerCase()}
+          style={{ color: theme.palette.text.primary }}
         >
-          <Link
-            to={page.replace(" ", "_").toLowerCase()}
-            style={{ color: theme.palette.text.primary }}
+          <MenuItem
+            key={page}
+            onClick={page === "Sign out" ? handleSignOut : handleDrawerClose}
           >
             <Box display="flex" gap={1}>
               {pagesIcons[index!]}
@@ -121,8 +124,8 @@ export default function NavBar() {
                 {page}
               </Typography>
             </Box>
-          </Link>
-        </MenuItem>
+          </MenuItem>
+        </Link>
       );
     }
   }
