@@ -112,10 +112,10 @@ export default function NavBar() {
       return (
         <Link
           to={page.replace(" ", "_").toLowerCase()}
+          key={page}
           style={{ color: theme.palette.text.primary }}
         >
           <MenuItem
-            key={page}
             onClick={page === "Sign out" ? handleSignOut : handleDrawerClose}
           >
             <Box display="flex" gap={1}>
