@@ -75,12 +75,15 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Root />}>
             <Route index element={<HomePage />} />
+            <Route path="/dashboard" element={<div>dashboard</div>} />
+            <Route path="/profile" element={<div>profile</div>} />
+
             <Route
-              path="/sign_in"
+              path="sign_in"
               element={user.isLoggedIn ? <Navigate to="/" /> : <AuthPage />}
             />
-            <Route path="/sign_up" element={<AuthPage />} />
-            <Route path="/sign_out" element={<Navigate to="/sign_in" />} />
+            <Route path="sign_up" element={<AuthPage />} />
+            <Route path="sign_out" element={<Navigate to="/sign_in" />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
