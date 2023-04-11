@@ -6,9 +6,7 @@ import { Box, Container } from "@mui/material";
 export default function Root() {
   return (
     <React.Fragment>
-      <Box component="header" mb={5}>
-        <NavBar />
-      </Box>
+      <NavBar />
       <Container>
         <Outlet />
       </Container>
