@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -21,6 +21,8 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { Location } from "/Users/danielraz/repos/codeCrunch/client/node_modules/@remix-run/router/dist/history";
+
 import {
   USER_ACTIONS,
   User,
@@ -29,6 +31,11 @@ import {
 } from "../context/UserContext";
 import axios from "axios";
 import { API_ENDPOINTS } from "../utils/endpointConstants";
+import {
+  LOCATION_ACTIONS,
+  usePrevLocation,
+  usePrevLocationDispactch,
+} from "../context/LocationContext";
 
 const pages = ["Dashboard", "Profile", "Sign in", "Sign out"];
 const pagesIcons = [
@@ -45,6 +52,8 @@ export default function NavBar() {
   const user = useUser();
   const userDispatch = useUserDispactch();
   const location = useLocation();
+  const prevLocation = usePrevLocation();
+  const prevLocationDispatch = usePrevLocationDispactch();
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
@@ -53,6 +62,14 @@ export default function NavBar() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handlePrevLocation = () => {
+    prevLocationDispatch({
+      type: LOCATION_ACTIONS.SET_PREVIOUS_LOCATION,
+      payload: location,
+    });
+    handleDrawerClose();
   };
 
   const handleSignOut = (event: React.MouseEvent) => {
@@ -64,18 +81,11 @@ export default function NavBar() {
         type: USER_ACTIONS.BLACKLIST,
         payload: { refreshToken: user.refreshToken },
       });
+      navigate("/sign_in");
     };
     logout();
-    handleDrawerClose();
+    handlePrevLocation();
   };
-
-  useEffect(() => {
-    if (!user.isLoggedIn) {
-      if (location.pathname === "/sign_out") {
-        navigate("/sign_in");
-      }
-    }
-  }, [user.isLoggedIn]);
 
   function navigationPage(
     user: User,
@@ -90,33 +100,44 @@ export default function NavBar() {
     }
     if (type === "navbar") {
       return (
-        <Link
-          to={page.replace(" ", "_").toLowerCase()}
+        <Button
           key={page}
-          style={{ color: theme.palette.text.primary }}
+          onClick={
+            page === "Sign out"
+              ? handleSignOut
+              : "/" + page.replace(" ", "_").toLowerCase() !== location.pathname
+              ? handlePrevLocation
+              : handleDrawerClose
+          }
+          sx={{
+            fontWeight: 600,
+            color: "inherit",
+            display: "block",
+          }}
         >
-          <Button
-            onClick={page === "Sign out" ? handleSignOut : handleDrawerClose}
-            sx={{
-              my: 2,
-              fontWeight: 600,
-              color: "inherit",
-              display: "block",
-            }}
+          <Link
+            to={page.replace(" ", "_").toLowerCase()}
+            style={{ color: theme.palette.text.primary, fontWeight: "inherit" }}
           >
             {page}
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       );
     } else {
       return (
-        <Link
-          to={page.replace(" ", "_").toLowerCase()}
+        <MenuItem
           key={page}
-          style={{ color: theme.palette.text.primary }}
+          onClick={
+            page === "Sign out"
+              ? handleSignOut
+              : "/" + page.replace(" ", "_").toLowerCase() !== location.pathname
+              ? handlePrevLocation
+              : handleDrawerClose
+          }
         >
-          <MenuItem
-            onClick={page === "Sign out" ? handleSignOut : handleDrawerClose}
+          <Link
+            to={page.replace(" ", "_").toLowerCase()}
+            style={{ color: theme.palette.text.primary }}
           >
             <Box display="flex" gap={1}>
               {pagesIcons[index!]}
@@ -124,11 +145,29 @@ export default function NavBar() {
                 {page}
               </Typography>
             </Box>
-          </MenuItem>
-        </Link>
+          </Link>
+        </MenuItem>
       );
     }
   }
+
+  useEffect(() => {
+    if (!user.isLoggedIn) {
+      if (location.pathname !== "/sign_in") {
+        if (location.pathname !== "/" && location.pathname !== "/sign_up") {
+          prevLocationDispatch({
+            type: LOCATION_ACTIONS.SET_PREVIOUS_LOCATION,
+            payload: location,
+          });
+          navigate("/sign_in");
+        }
+      }
+    }
+  }, [user.isLoggedIn, location.pathname]);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user.isLoggedIn]);
 
   return (
     <AppBar
