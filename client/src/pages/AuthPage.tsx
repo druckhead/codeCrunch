@@ -1,14 +1,17 @@
 import { Box, Typography, useTheme } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AuthForm from "../components/AuthForm";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-export default function AuthPage() {
-  const location = useLocation();
-  const pathName = location.pathname;
-  const isSignInDefault = pathName === "/sign_in";
-  const [isSignIn, setIsSignIn] = useState(isSignInDefault);
+export type authPageProps = { isSignInOuter: boolean };
+
+export default function AuthPage({ isSignInOuter }: authPageProps) {
+  const [isSignIn, setIsSignIn] = useState(isSignInOuter);
   const theme = useTheme();
+
+  useEffect(() => {
+    setIsSignIn(isSignInOuter);
+  }, [isSignInOuter]);
 
   return (
     <Box>
@@ -22,7 +25,13 @@ export default function AuthPage() {
       >
         {`Sign ${isSignIn ? "in to your account" : "up for free"}`}
       </Typography>
-      <Typography component="div" color="inherit" noWrap textAlign="center">
+      <Typography
+        component="div"
+        color="inherit"
+        noWrap
+        textAlign="center"
+        mb="1em"
+      >
         <Box display="flex" justifyContent="center">
           <Box component="div">
             <Typography component="span" color={theme.palette.text.primary}>

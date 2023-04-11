@@ -25,6 +25,8 @@ export default function App() {
   const user = useUser();
   const location = useLocation();
   const prevLocation = usePrevLocation();
+  const isSignIn = location.pathname === "/sign_in";
+
   const themeAuto = React.useMemo(
     () =>
       createTheme({
@@ -104,7 +106,7 @@ export default function App() {
                 user.isLoggedIn ? (
                   <Navigate to={prevLocation.pathname} />
                 ) : (
-                  <AuthPage />
+                  <AuthPage isSignInOuter={isSignIn} />
                 )
               }
             />
@@ -114,7 +116,7 @@ export default function App() {
                 user.isLoggedIn ? (
                   <Navigate to={prevLocation.pathname} />
                 ) : (
-                  <AuthPage />
+                  <AuthPage isSignInOuter={isSignIn} />
                 )
               }
             />
