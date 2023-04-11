@@ -4,13 +4,16 @@ import App from "./App";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./context/UserContext";
+import { LocationProvider } from "./context/LocationContext";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <UserProvider>
+  // <React.StrictMode>
+  <UserProvider>
+    <LocationProvider>
+      <BrowserRouter>
         <App />
-      </UserProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+      </BrowserRouter>
+    </LocationProvider>
+  </UserProvider>
+  // </React.StrictMode>
 );
