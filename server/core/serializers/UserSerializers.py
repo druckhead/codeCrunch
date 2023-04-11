@@ -13,7 +13,6 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "user_permissions",
             "is_superuser",
-            "is_staff",
             "is_active",
         ]
 
