@@ -11,7 +11,7 @@ export default function AuthPage() {
   const theme = useTheme();
 
   return (
-    <Box mt={5}>
+    <Box>
       <Typography
         component="h2"
         variant="h5"

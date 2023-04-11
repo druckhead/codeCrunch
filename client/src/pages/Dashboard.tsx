@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Dashboard() {
   return (
-    <Box mt={5}>
+    <Box>
       <Typography>Dashboard</Typography>
     </Box>
   );
