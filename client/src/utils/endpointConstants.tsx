@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: FULL_API_ENDPOINT + TOKEN + "login/",
     REFRESH: FULL_API_ENDPOINT + TOKEN + "refresh/",
+    ME: FULL_API_ENDPOINT + TOKEN + "me/",
     VERIFY: FULL_API_ENDPOINT + TOKEN + "verify/",
     LOGOUT: FULL_API_ENDPOINT + TOKEN + "blacklist/",
   },
