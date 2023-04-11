@@ -5,10 +5,10 @@ type Nullable<T> = T | null | undefined;
 export interface User {
   id: Nullable<number>;
   username: Nullable<string>;
-  firstName: Nullable<string>;
-  lastName: Nullable<string>;
+  first_name: Nullable<string>;
+  last_name: Nullable<string>;
   email: Nullable<string>;
-  isStaff: Nullable<boolean>;
+  is_staff: Nullable<boolean>;
   accessToken: Nullable<string>;
   refreshToken: Nullable<string>;
   isLoggedIn: boolean;
@@ -17,6 +17,8 @@ export interface User {
 export enum USER_ACTIONS {
   REFRESH_ACCESS_TOKEN = "refreshAccessToken",
   LOGIN = "login",
+  REGISTER = "register",
+  ME = "me",
   BLACKLIST = "blacklist ",
 }
 
@@ -28,10 +30,10 @@ interface UserAction {
 const INITIAL_USER_STATE: User = {
   id: null,
   username: null,
-  firstName: null,
-  lastName: null,
+  first_name: null,
+  last_name: null,
   email: null,
-  isStaff: null,
+  is_staff: null,
   accessToken: null,
   refreshToken: null,
   isLoggedIn: false,
@@ -41,15 +43,21 @@ function userReducer(userState: User, action: UserAction): User {
   switch (action.type) {
     case USER_ACTIONS.LOGIN: {
       return {
-        id: action.payload.id,
-        username: action.payload.username,
-        firstName: action.payload.firstName,
-        lastName: action.payload.lastName,
-        email: action.payload.email,
-        isStaff: action.payload.isStaff,
-        accessToken: action.payload.accessToken,
-        refreshToken: action.payload.refreshToken,
+        ...userState,
+        ...action.payload,
         isLoggedIn: true,
+      };
+    }
+    case USER_ACTIONS.REGISTER: {
+      return {
+        ...userState,
+        ...action.payload,
+      };
+    }
+    case USER_ACTIONS.ME: {
+      return {
+        ...userState,
+        ...action.payload,
       };
     }
     case USER_ACTIONS.BLACKLIST: {
