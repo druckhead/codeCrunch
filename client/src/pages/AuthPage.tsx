@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 export default function AuthPage() {
   const location = useLocation();
   const pathName = location.pathname;
-  const isSignInDefault = pathName === "/sign_in" ? true : false;
+  const isSignInDefault = pathName === "/sign_in";
   const [isSignIn, setIsSignIn] = useState(isSignInDefault);
   const theme = useTheme();
 
