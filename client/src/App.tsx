@@ -1,13 +1,14 @@
-import React from "react";
+import React, { createContext, useEffect, useState } from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Root from "./pages/Root";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
 import { useUser } from "./context/UserContext";
+import { usePrevLocation } from "./context/LocationContext";
 
 export const ColorModeContext = React.createContext({
   getIsAutoMode: (): boolean => {
@@ -21,6 +22,8 @@ export default function App() {
   const [isAutoMode, setIsAutoMode] = React.useState<boolean>(true);
   const prefersDarkMode = useMediaQuery(`(prefers-color-scheme: dark)`);
   const user = useUser();
+  const location = useLocation();
+  const prevLocation = usePrevLocation();
   const themeAuto = React.useMemo(
     () =>
       createTheme({
@@ -66,7 +69,10 @@ export default function App() {
       }),
     [mode]
   );
-  console.log(user.isLoggedIn);
+
+  useEffect(() => {
+    console.log(`logged in: ${user.isLoggedIn}`, location, prevLocation);
+  }, [location.pathname, prevLocation.pathname]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -75,14 +81,46 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Root />}>
             <Route index element={<HomePage />} />
-            <Route path="/dashboard" element={<div>dashboard</div>} />
-            <Route path="/profile" element={<div>profile</div>} />
-
+            <Route
+              path="/dashboard"
+              element={
+                user.isLoggedIn ? (
+                  <div>dashboard</div>
+                ) : (
+                  <Navigate to="/sign_in" />
+                )
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                user.isLoggedIn ? (
+                  <div>profile</div>
+                ) : (
+                  <Navigate to="/sign_in" />
+                )
+              }
+            />
             <Route
               path="sign_in"
-              element={user.isLoggedIn ? <Navigate to="/" /> : <AuthPage />}
+              element={
+                user.isLoggedIn ? (
+                  <Navigate to={prevLocation.pathname} />
+                ) : (
+                  <AuthPage />
+                )
+              }
             />
-            <Route path="sign_up" element={<AuthPage />} />
+            <Route
+              path="sign_up"
+              element={
+                user.isLoggedIn ? (
+                  <Navigate to={prevLocation.pathname} />
+                ) : (
+                  <AuthPage />
+                )
+              }
+            />
             <Route path="sign_out" element={<Navigate to="/sign_in" />} />
             <Route path="*" element={<NotFound />} />
           </Route>
