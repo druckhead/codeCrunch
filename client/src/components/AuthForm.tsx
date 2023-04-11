@@ -32,7 +32,11 @@ interface defaultSigninValues {
   password: string;
 }
 
-export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
+type AuthFormProps = {
+  isSignIn: boolean;
+};
+
+export default function AuthForm({ isSignIn }: AuthFormProps) {
   const [refreshToken, setRefreshToken] = useLocalStorage("refresh", null);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +53,6 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
       password: "",
       confirm_password: "",
     });
-  const user = useUser();
   const userDispatch = useUserDispactch();
 
   const handleShowPassword = (event: React.MouseEvent) => {
@@ -67,6 +70,10 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
           API_ENDPOINTS.AUTH.LOGIN,
           loginFormValues
         );
+        const config = {
+          headers: { Authorization: `Bearer ${response.data.access}` },
+        };
+        const userResponse = await axios.get(API_ENDPOINTS.AUTH.ME, config);
         userDispatch({
           type: USER_ACTIONS.LOGIN,
           payload: {
@@ -74,12 +81,32 @@ export default function AuthForm({ isSignIn }: { isSignIn: boolean }) {
             refreshToken: response.data.refresh,
           },
         });
+        userDispatch({ type: USER_ACTIONS.ME, payload: userResponse.data });
         setRefreshToken(response.data.refresh);
       };
       getLoginTokens();
     } else {
       console.log(registerFormValues);
       // TODO SEND REGISTER TO SERVER
+      const register = async () => {
+        const response = await axios.post(
+          API_ENDPOINTS.USERS.REGISTER,
+          registerFormValues
+        );
+        const config = {
+          headers: { Authorization: `Bearer ${response.data.access}` },
+        };
+        const userResponse = await axios.get(API_ENDPOINTS.AUTH.ME, config);
+        userDispatch({
+          type: USER_ACTIONS.LOGIN,
+          payload: {
+            accessToken: response.data.access,
+            refreshToken: response.data.refresh,
+          },
+        });
+        userDispatch({ type: USER_ACTIONS.ME, payload: userResponse.data });
+      };
+      register();
     }
   };
 
