@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
 import { useUser } from "./context/UserContext";
 import { usePrevLocation } from "./context/LocationContext";
+import Dashboard from "./pages/Dashboard";
 
 export const ColorModeContext = React.createContext({
   getIsAutoMode: (): boolean => {
@@ -84,11 +85,7 @@ export default function App() {
             <Route
               path="/dashboard"
               element={
-                user.isLoggedIn ? (
-                  <div>dashboard</div>
-                ) : (
-                  <Navigate to="/sign_in" />
-                )
+                user.isLoggedIn ? <Dashboard /> : <Navigate to="/sign_in" />
               }
             />
             <Route
