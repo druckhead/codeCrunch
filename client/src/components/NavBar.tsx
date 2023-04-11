@@ -105,7 +105,9 @@ export default function NavBar() {
           onClick={
             page === "Sign out"
               ? handleSignOut
-              : "/" + page.replace(" ", "_").toLowerCase() !== location.pathname
+              : "/" + page.replace(" ", "_").toLowerCase() !==
+                  location.pathname &&
+                "/" + page.replace(" ", "_").toLowerCase() !== "/sign_in"
               ? handlePrevLocation
               : handleDrawerClose
           }
@@ -125,19 +127,21 @@ export default function NavBar() {
       );
     } else {
       return (
-        <MenuItem
+        <Link
           key={page}
-          onClick={
-            page === "Sign out"
-              ? handleSignOut
-              : "/" + page.replace(" ", "_").toLowerCase() !== location.pathname
-              ? handlePrevLocation
-              : handleDrawerClose
-          }
+          to={page.replace(" ", "_").toLowerCase()}
+          style={{ color: theme.palette.text.primary }}
         >
-          <Link
-            to={page.replace(" ", "_").toLowerCase()}
-            style={{ color: theme.palette.text.primary }}
+          <MenuItem
+            onClick={
+              page === "Sign out"
+                ? handleSignOut
+                : "/" + page.replace(" ", "_").toLowerCase() !==
+                    location.pathname &&
+                  "/" + page.replace(" ", "_").toLowerCase() !== "/sign_in"
+                ? handlePrevLocation
+                : handleDrawerClose
+            }
           >
             <Box display="flex" gap={1}>
               {pagesIcons[index!]}
@@ -145,8 +149,8 @@ export default function NavBar() {
                 {page}
               </Typography>
             </Box>
-          </Link>
-        </MenuItem>
+          </MenuItem>
+        </Link>
       );
     }
   }
@@ -175,6 +179,7 @@ export default function NavBar() {
       sx={{
         backgroundColor: "inherit",
         color: theme.palette.text.primary,
+        mb: 5,
       }}
     >
       <Container
