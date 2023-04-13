@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   USER_ACTIONS,
   useUser,
@@ -17,6 +17,15 @@ import {
 import axios from "axios";
 import { API_ENDPOINTS } from "../utils/endpointConstants";
 import { useLocalStorage } from "usehooks-ts";
+import {
+  Control,
+  Controller,
+  FieldErrors,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
+import { useLocation } from "react-router-dom";
+import { ErrorMessage } from "@hookform/error-message";
 
 interface defaultSignupValues {
   first_name: string;
@@ -36,86 +45,100 @@ type AuthFormProps = {
   isSignIn: boolean;
 };
 
-export default function AuthForm({ isSignIn }: AuthFormProps) {
-  const [refreshToken, setRefreshToken] = useLocalStorage("refresh", null);
+const defaultLogin: defaultSigninValues = {
+  username: "",
+  password: "",
+};
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [loginFormValues, setLoginFormValues] = useState<defaultSigninValues>({
-    username: "",
-    password: "",
+const defaultSignup: defaultSignupValues = {
+  first_name: "",
+  last_name: "",
+  username: "",
+  email: "",
+  password: "",
+  confirm_password: "",
+};
+
+export default function AuthForm({ isSignIn }: AuthFormProps) {
+  const {
+    control,
+    formState,
+    reset,
+    register,
+    handleSubmit,
+    formState: { isSubmitSuccessful, errors },
+  } = useForm<defaultSigninValues | defaultSignupValues>({
+    defaultValues: isSignIn ? defaultLogin : defaultSignup,
   });
-  const [registerFormValues, setRegisterFormValues] =
-    useState<defaultSignupValues>({
-      first_name: "",
-      last_name: "",
-      username: "",
-      email: "",
-      password: "",
-      confirm_password: "",
-    });
+  const [refreshToken, setRefreshToken] = useLocalStorage("refresh", null);
+  const location = useLocation();
+  const [showPassword, setShowPassword] = useState(false);
   const userDispatch = useUserDispactch();
+
+  useEffect(() => {
+    isSignIn ? reset(defaultLogin) : reset(defaultSignup);
+  }, [isSignIn]);
 
   const handleShowPassword = (event: React.MouseEvent) => {
     setShowPassword((preValue) => !preValue);
   };
 
-  const handleSubmit = (
-    event: React.FormEvent,
-    type: "sign_in" | "sign_up"
+  const onSubmit: SubmitHandler<defaultSigninValues | defaultSignupValues> = (
+    data
   ) => {
-    event.preventDefault();
-    if (type === "sign_in") {
-      const getLoginTokens = async () => {
-        const response = await axios.post(
-          API_ENDPOINTS.AUTH.LOGIN,
-          loginFormValues
-        );
-        const config = {
-          headers: { Authorization: `Bearer ${response.data.access}` },
-        };
-        const userResponse = await axios.get(API_ENDPOINTS.AUTH.ME, config);
-        userDispatch({
-          type: USER_ACTIONS.LOGIN,
-          payload: {
-            accessToken: response.data.access,
-            refreshToken: response.data.refresh,
-          },
-        });
-        userDispatch({ type: USER_ACTIONS.ME, payload: userResponse.data });
-        setRefreshToken(response.data.refresh);
-      };
-      getLoginTokens();
-    } else {
-      console.log(registerFormValues);
-      const register = async () => {
-        const response = await axios.post(
-          API_ENDPOINTS.USERS.REGISTER,
-          registerFormValues
-        );
-        const config = {
-          headers: { Authorization: `Bearer ${response.data.access}` },
-        };
-        const userResponse = await axios.get(API_ENDPOINTS.AUTH.ME, config);
-        userDispatch({
-          type: USER_ACTIONS.LOGIN,
-          payload: {
-            accessToken: response.data.access,
-            refreshToken: response.data.refresh,
-          },
-        });
-        userDispatch({ type: USER_ACTIONS.ME, payload: userResponse.data });
-      };
-      register();
-    }
+    console.log(data);
+
+    // event.preventDefault();
+    // if (location.pathname === "/sign_in") {
+    //   const getLoginTokens = async () => {
+    //     const response = await axios.post(
+    //       API_ENDPOINTS.AUTH.LOGIN,
+    //       loginFormValues
+    //     );
+    //     const config = {
+    //       headers: { Authorization: `Bearer ${response.data.access}` },
+    //     };
+    //     const userResponse = await axios.get(API_ENDPOINTS.AUTH.ME, config);
+    //     userDispatch({
+    //       type: USER_ACTIONS.LOGIN,
+    //       payload: {
+    //         accessToken: response.data.access,
+    //         refreshToken: response.data.refresh,
+    //       },
+    //     });
+    //     userDispatch({ type: USER_ACTIONS.ME, payload: userResponse.data });
+    //     setRefreshToken(response.data.refresh);
+    //   };
+    //   getLoginTokens();
+    // } else {
+    //   console.log(registerFormValues);
+    //   const register = async () => {
+    //     const response = await axios.post(
+    //       API_ENDPOINTS.USERS.REGISTER,
+    //       registerFormValues
+    //     );
+    //     const config = {
+    //       headers: { Authorization: `Bearer ${response.data.access}` },
+    //     };
+    //     const userResponse = await axios.get(API_ENDPOINTS.AUTH.ME, config);
+    //     userDispatch({
+    //       type: USER_ACTIONS.LOGIN,
+    //       payload: {
+    //         accessToken: response.data.access,
+    //         refreshToken: response.data.refresh,
+    //       },
+    //     });
+    //     userDispatch({ type: USER_ACTIONS.ME, payload: userResponse.data });
+    //   };
+    //   register();
+    // }
   };
 
   return (
     <Box p={2} display="grid" sx={{ placeItems: "center" }}>
       <Box
         component="form"
-        onSubmit={(event) =>
-          handleSubmit(event, isSignIn ? "sign_in" : "sign_up")
-        }
+        onSubmit={handleSubmit(onSubmit)}
         border={1}
         py={4}
         borderRadius={3}
@@ -130,15 +153,15 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
         >
           {isSignIn ? (
             <SigninForm
-              loginFormValues={loginFormValues}
-              setLoginFormValues={setLoginFormValues}
+              control={control}
+              errors={errors}
               showPassword={showPassword}
               showPasswordHandler={handleShowPassword}
             />
           ) : (
             <SignupForm
-              registerFormValues={registerFormValues}
-              setRegisterFormValues={setRegisterFormValues}
+              control={control}
+              errors={errors}
               showPassword={showPassword}
               showPasswordHandler={handleShowPassword}
             />
@@ -159,186 +182,208 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
   );
 }
 
-type signinForm = {
-  loginFormValues: defaultSigninValues;
-  setLoginFormValues: React.Dispatch<React.SetStateAction<defaultSigninValues>>;
+type formType = {
+  control: Control<defaultSigninValues | defaultSignupValues, any>;
+  errors: FieldErrors<defaultSigninValues | defaultSignupValues>;
   showPassword: boolean;
   showPasswordHandler: React.MouseEventHandler;
 };
 
 function SigninForm({
-  loginFormValues,
-  setLoginFormValues,
+  control,
+  errors,
   showPassword,
   showPasswordHandler,
-}: signinForm) {
+}: formType) {
   return (
     <React.Fragment>
       <Grid item>
-        <TextField
-          id="username-input"
+        <Controller
           name="username"
-          label="Username"
-          type="text"
-          value={loginFormValues.username}
-          onChange={(e) => {
-            const { name, value } = e.target;
-            setLoginFormValues({ ...loginFormValues, [name]: value });
+          control={control}
+          rules={{
+            required: "Username is required",
           }}
-          sx={{ width: { xs: 200, sm: 248 } }}
+          render={({ field: { ref, ...field } }) => (
+            <TextField
+              {...field}
+              inputRef={ref}
+              id="username-input"
+              label="Username"
+              type="text"
+              aria-invalid={errors.password ? "true" : "false"}
+              error={!!errors.username}
+              helperText={errors.username?.message}
+              sx={{ width: { xs: 200, sm: 248 } }}
+            />
+          )}
         />
       </Grid>
       <Grid item>
-        <TextField
-          id="password-input"
+        <Controller
           name="password"
-          label="Password"
-          type={!showPassword ? "password" : "text"}
-          value={loginFormValues.password}
-          onChange={(e) => {
-            const { name, value } = e.target;
-            setLoginFormValues({ ...loginFormValues, [name]: value });
+          control={control}
+          rules={{
+            required: "Password is required",
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters long",
+            },
           }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={showPasswordHandler}>
-                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={{ width: { xs: 200, sm: 248 } }}
+          render={({ field: { ref, ...field } }) => (
+            <TextField
+              {...field}
+              inputRef={ref}
+              id="password-input"
+              label="Password"
+              type={!showPassword ? "password" : "text"}
+              aria-invalid={errors.password ? "true" : "false"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={showPasswordHandler}>
+                      {showPassword ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <VisibilityIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              error={!!errors.password}
+              helperText={errors.password?.message}
+              sx={{ width: { xs: 200, sm: 248 } }}
+            />
+          )}
         />
       </Grid>
     </React.Fragment>
   );
 }
 
-type signupForm = {
-  showPassword: boolean;
-  showPasswordHandler: React.MouseEventHandler;
-  registerFormValues: defaultSignupValues;
-  setRegisterFormValues: React.Dispatch<
-    React.SetStateAction<{
-      first_name: string;
-      last_name: string;
-      username: string;
-      email: string;
-      password: string;
-      confirm_password: string;
-    }>
-  >;
-};
-
 function SignupForm({
-  registerFormValues,
-  setRegisterFormValues,
+  control,
+  errors,
   showPassword,
   showPasswordHandler,
-}: signupForm) {
+}: formType) {
   return (
     <React.Fragment>
       <Grid item>
-        <TextField
-          id="username-input"
+        <Controller
+          render={({ field }) => (
+            <TextField
+              {...field}
+              id="username-input"
+              label="Username"
+              type="text"
+              sx={{ width: { xs: 200, sm: 248 } }}
+            />
+          )}
           name="username"
-          label="Username"
-          type="text"
-          value={registerFormValues.username}
-          onChange={(e) => {
-            const { name, value } = e.target;
-            setRegisterFormValues({ ...registerFormValues, [name]: value });
-          }}
-          sx={{ width: { xs: 200, sm: 248 } }}
+          control={control}
         />
       </Grid>
       <Grid item>
-        <TextField
-          id="email-input"
+        <Controller
+          render={({ field }) => (
+            <TextField
+              {...field}
+              id="email-input"
+              label="Email"
+              type="text"
+              sx={{ width: { xs: 200, sm: 248 } }}
+            />
+          )}
           name="email"
-          label="Email"
-          type="text"
-          value={registerFormValues.email}
-          onChange={(e) => {
-            const { name, value } = e.target;
-            setRegisterFormValues({ ...registerFormValues, [name]: value });
-          }}
-          sx={{ width: { xs: 200, sm: 248 } }}
+          control={control}
         />
       </Grid>
       <Grid item>
-        <TextField
-          id="first-name-input"
+        <Controller
+          render={({ field }) => (
+            <TextField
+              {...field}
+              id="first-name-input"
+              label="First Name"
+              type="text"
+              sx={{ width: { xs: 200, sm: 248 } }}
+            />
+          )}
           name="first_name"
-          label="First Name"
-          type="text"
-          value={registerFormValues.first_name}
-          onChange={(e) => {
-            const { name, value } = e.target;
-            setRegisterFormValues({ ...registerFormValues, [name]: value });
-          }}
-          sx={{ width: { xs: 200, sm: 248 } }}
+          control={control}
         />
       </Grid>
       <Grid item>
-        <TextField
-          id="last-name-input"
+        <Controller
+          render={({ field }) => (
+            <TextField
+              {...field}
+              id="last-name-input"
+              label="Last Name"
+              type="text"
+              sx={{ width: { xs: 200, sm: 248 } }}
+            />
+          )}
           name="last_name"
-          label="Last Name"
-          type="text"
-          value={registerFormValues.last_name}
-          onChange={(e) => {
-            const { name, value } = e.target;
-            setRegisterFormValues({ ...registerFormValues, [name]: value });
-          }}
-          sx={{ width: { xs: 200, sm: 248 } }}
+          control={control}
         />
       </Grid>
       <Grid item>
-        <TextField
-          id="password-input"
+        <Controller
+          render={({ field }) => (
+            <TextField
+              {...field}
+              id="password-input"
+              label="Password"
+              type={!showPassword ? "password" : "text"}
+              sx={{ width: { xs: 200, sm: 248 } }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={showPasswordHandler}>
+                      {showPassword ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <VisibilityIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
           name="password"
-          label="Password"
-          type={!showPassword ? "password" : "text"}
-          value={registerFormValues.password}
-          onChange={(e) => {
-            const { name, value } = e.target;
-            setRegisterFormValues({ ...registerFormValues, [name]: value });
-          }}
-          sx={{ width: { xs: 200, sm: 248 } }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={showPasswordHandler}>
-                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+          control={control}
         />
       </Grid>
       <Grid item>
-        <TextField
-          id="confirm-password-input"
+        <Controller
+          render={({ field }) => (
+            <TextField
+              {...field}
+              id="confirm-password-input"
+              label="Confirm Password"
+              type={!showPassword ? "password" : "text"}
+              sx={{ width: { xs: 200, sm: 248 } }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={showPasswordHandler}>
+                      {showPassword ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <VisibilityIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
           name="confirm_password"
-          label="Confirm Password"
-          type={!showPassword ? "password" : "text"}
-          value={registerFormValues.confirm_password}
-          onChange={(e) => {
-            const { name, value } = e.target;
-            setRegisterFormValues({ ...registerFormValues, [name]: value });
-          }}
-          sx={{ width: { xs: 200, sm: 248 } }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={showPasswordHandler}>
-                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+          control={control}
         />
       </Grid>
     </React.Fragment>
