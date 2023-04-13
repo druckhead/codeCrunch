@@ -21,7 +21,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Location } from "/Users/danielraz/repos/codeCrunch/client/node_modules/@remix-run/router/dist/history";
+import styles from "./NavBar.module.css";
 
 import {
   USER_ACTIONS,
@@ -100,30 +100,31 @@ export default function NavBar() {
     }
     if (type === "navbar") {
       return (
-        <Button
+        <Link
+          to={page.replace(" ", "_").toLowerCase()}
           key={page}
-          onClick={
-            page === "Sign out"
-              ? handleSignOut
-              : "/" + page.replace(" ", "_").toLowerCase() !==
-                  location.pathname &&
-                "/" + page.replace(" ", "_").toLowerCase() !== "/sign_in"
-              ? handlePrevLocation
-              : handleDrawerClose
-          }
-          sx={{
-            fontWeight: 600,
-            color: "inherit",
-            display: "block",
-          }}
+          className={styles.hoverUnderlineAnimation}
+          style={{ color: theme.palette.text.primary }}
         >
-          <Link
-            to={page.replace(" ", "_").toLowerCase()}
-            style={{ color: theme.palette.text.primary, fontWeight: "inherit" }}
+          <Typography
+            onClick={
+              page === "Sign out"
+                ? handleSignOut
+                : "/" + page.replace(" ", "_").toLowerCase() !==
+                    location.pathname &&
+                  "/" + page.replace(" ", "_").toLowerCase() !== "/sign_in"
+                ? handlePrevLocation
+                : handleDrawerClose
+            }
+            className={
+              "/" + page.replace(" ", "_").toLowerCase() === location.pathname
+                ? styles.underline
+                : ""
+            }
           >
             {page}
-          </Link>
-        </Button>
+          </Typography>
+        </Link>
       );
     } else {
       return (
