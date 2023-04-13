@@ -25,7 +25,6 @@ import {
   useForm,
 } from "react-hook-form";
 import { useLocation } from "react-router-dom";
-import { ErrorMessage } from "@hookform/error-message";
 
 interface defaultSignupValues {
   first_name: string;
@@ -142,7 +141,12 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
         border={1}
         py={4}
         borderRadius={3}
-        sx={{ width: { xs: "100%", sm: "50%" } }}
+        sx={{
+          width: { xs: "100%", sm: "50%" },
+          "& .MuiFormHelperText-root::before": {
+            content: '"⚠ "',
+          },
+        }}
       >
         <Grid
           container
