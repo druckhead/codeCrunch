@@ -87,7 +87,6 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
       getLoginTokens();
     } else {
       console.log(registerFormValues);
-      // TODO SEND REGISTER TO SERVER
       const register = async () => {
         const response = await axios.post(
           API_ENDPOINTS.USERS.REGISTER,
