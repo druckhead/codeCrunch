@@ -186,9 +186,16 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
   );
 }
 
-type formType = {
-  control: Control<defaultSigninValues | defaultSignupValues, any>;
-  errors: FieldErrors<defaultSigninValues | defaultSignupValues>;
+type signInType = {
+  control: Control<defaultSigninValues, any>;
+  errors: FieldErrors<defaultSigninValues>;
+  showPassword: boolean;
+  showPasswordHandler: React.MouseEventHandler;
+};
+
+type signUpType = {
+  control: Control<defaultSignupValues, any>;
+  errors: FieldErrors<defaultSignupValues>;
   showPassword: boolean;
   showPasswordHandler: React.MouseEventHandler;
 };
@@ -198,7 +205,7 @@ function SigninForm({
   errors,
   showPassword,
   showPasswordHandler,
-}: formType) {
+}: signInType) {
   return (
     <React.Fragment>
       <Grid item>
@@ -241,7 +248,6 @@ function SigninForm({
               id="password-input"
               label="Password"
               type={!showPassword ? "password" : "text"}
-              aria-invalid={errors.password ? "true" : "false"}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -255,6 +261,7 @@ function SigninForm({
                   </InputAdornment>
                 ),
               }}
+              aria-invalid={errors.password ? "true" : "false"}
               error={!!errors.password}
               helperText={errors.password?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
@@ -271,71 +278,90 @@ function SignupForm({
   errors,
   showPassword,
   showPasswordHandler,
-}: formType) {
+}: signUpType) {
   return (
     <React.Fragment>
       <Grid item>
         <Controller
+          name="username"
+          control={control}
+          rules={{ required: "Username is required" }}
           render={({ field }) => (
             <TextField
               {...field}
               id="username-input"
               label="Username"
               type="text"
+              aria-invalid={errors.username ? "true" : "false"}
+              error={!!errors.username}
+              helperText={errors.username?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
-          name="username"
-          control={control}
         />
       </Grid>
       <Grid item>
         <Controller
+          name="email"
+          control={control}
+          rules={{ required: "Email is required" }}
           render={({ field }) => (
             <TextField
               {...field}
               id="email-input"
               label="Email"
               type="text"
+              aria-invalid={errors.email ? "true" : "false"}
+              error={!!errors.email}
+              helperText={errors.email?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
-          name="email"
-          control={control}
         />
       </Grid>
       <Grid item>
         <Controller
+          name="first_name"
+          control={control}
+          rules={{ required: "First name is required" }}
           render={({ field }) => (
             <TextField
               {...field}
               id="first-name-input"
               label="First Name"
               type="text"
+              aria-invalid={errors.first_name ? "true" : "false"}
+              error={!!errors.email}
+              helperText={errors.first_name?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
-          name="first_name"
-          control={control}
         />
       </Grid>
       <Grid item>
         <Controller
+          name="last_name"
+          control={control}
+          rules={{ required: "Last name is required" }}
           render={({ field }) => (
             <TextField
               {...field}
               id="last-name-input"
               label="Last Name"
               type="text"
+              aria-invalid={errors.last_name ? "true" : "false"}
+              error={!!errors.last_name}
+              helperText={errors.last_name?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
-          name="last_name"
-          control={control}
         />
       </Grid>
       <Grid item>
         <Controller
+          name="password"
+          control={control}
+          rules={{ required: "Password is required" }}
           render={({ field }) => (
             <TextField
               {...field}
@@ -343,6 +369,9 @@ function SignupForm({
               label="Password"
               type={!showPassword ? "password" : "text"}
               sx={{ width: { xs: 200, sm: 248 } }}
+              aria-invalid={errors.password ? "true" : "false"}
+              error={!!errors.password}
+              helperText={errors.password?.message}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -358,18 +387,22 @@ function SignupForm({
               }}
             />
           )}
-          name="password"
-          control={control}
         />
       </Grid>
       <Grid item>
         <Controller
+          name="confirm_password"
+          control={control}
+          rules={{ required: "Confirm Password is required" }}
           render={({ field }) => (
             <TextField
               {...field}
               id="confirm-password-input"
               label="Confirm Password"
               type={!showPassword ? "password" : "text"}
+              aria-invalid={errors.confirm_password ? "true" : "false"}
+              error={!!errors.confirm_password}
+              helperText={errors.confirm_password?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
               InputProps={{
                 endAdornment: (
@@ -386,8 +419,6 @@ function SignupForm({
               }}
             />
           )}
-          name="confirm_password"
-          control={control}
         />
       </Grid>
     </React.Fragment>
