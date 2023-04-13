@@ -117,7 +117,9 @@ export default function NavBar() {
                 : handleDrawerClose
             }
             className={
-              "/" + page.replace(" ", "_").toLowerCase() === location.pathname
+              "/" + page.replace(" ", "_").toLowerCase() ===
+                location.pathname ||
+              (page === "Sign in" && location.pathname === "/sign_up")
                 ? styles.underline
                 : ""
             }
@@ -328,6 +330,10 @@ export default function NavBar() {
               color: "text.primary",
               borderRadius: 1,
               flexGrow: 0,
+              "&.MuiBox-root .MuiIconButton-root:hover": {
+                backgroundColor: "transparent",
+                color: "#ffa94c",
+              },
             }}
           >
             <Link
