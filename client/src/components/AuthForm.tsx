@@ -75,7 +75,13 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
   const userDispatch = useUserDispactch();
 
   useEffect(() => {
-    isSignIn ? reset(defaultLogin) : reset(defaultSignup);
+    if (isSignIn) {
+      reset(defaultSignup);
+      reset(defaultLogin);
+    } else {
+      reset(defaultLogin);
+      reset(defaultSignup);
+    }
   }, [isSignIn]);
 
   const handleShowPassword = (event: React.MouseEvent) => {
@@ -85,6 +91,7 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
   const onSubmit: SubmitHandler<defaultSigninValues | defaultSignupValues> = (
     data
   ) => {
+    // isSignIn ? reset(defaultLogin) : reset(defaultSignup);
     console.log(data);
 
     // event.preventDefault();
@@ -194,7 +201,7 @@ type signInType = {
 };
 
 type signUpType = {
-  control: Control<defaultSignupValues, any>;
+  control: Control<defaultSignupValues | defaultSigninValues, any>;
   errors: FieldErrors<defaultSignupValues>;
   showPassword: boolean;
   showPasswordHandler: React.MouseEventHandler;
@@ -286,9 +293,10 @@ function SignupForm({
           name="username"
           control={control}
           rules={{ required: "Username is required" }}
-          render={({ field }) => (
+          render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
+              inputRef={ref}
               id="username-input"
               label="Username"
               type="text"
@@ -305,9 +313,10 @@ function SignupForm({
           name="email"
           control={control}
           rules={{ required: "Email is required" }}
-          render={({ field }) => (
+          render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
+              inputRef={ref}
               id="email-input"
               label="Email"
               type="text"
@@ -324,14 +333,15 @@ function SignupForm({
           name="first_name"
           control={control}
           rules={{ required: "First name is required" }}
-          render={({ field }) => (
+          render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
+              inputRef={ref}
               id="first-name-input"
               label="First Name"
               type="text"
               aria-invalid={errors.first_name ? "true" : "false"}
-              error={!!errors.email}
+              error={!!errors.first_name}
               helperText={errors.first_name?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
@@ -343,9 +353,10 @@ function SignupForm({
           name="last_name"
           control={control}
           rules={{ required: "Last name is required" }}
-          render={({ field }) => (
+          render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
+              inputRef={ref}
               id="last-name-input"
               label="Last Name"
               type="text"
@@ -362,9 +373,10 @@ function SignupForm({
           name="password"
           control={control}
           rules={{ required: "Password is required" }}
-          render={({ field }) => (
+          render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
+              inputRef={ref}
               id="password-input"
               label="Password"
               type={!showPassword ? "password" : "text"}
@@ -394,9 +406,10 @@ function SignupForm({
           name="confirm_password"
           control={control}
           rules={{ required: "Confirm Password is required" }}
-          render={({ field }) => (
+          render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
+              inputRef={ref}
               id="confirm-password-input"
               label="Confirm Password"
               type={!showPassword ? "password" : "text"}
