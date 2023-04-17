@@ -76,10 +76,8 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
 
   useEffect(() => {
     if (isSignIn) {
-      reset(defaultSignup);
       reset(defaultLogin);
     } else {
-      reset(defaultLogin);
       reset(defaultSignup);
     }
   }, [isSignIn]);
@@ -229,6 +227,7 @@ function SigninForm({
               id="username-input"
               label="Username"
               type="text"
+              value={field.value || ""}
               aria-invalid={errors.password ? "true" : "false"}
               error={!!errors.username}
               helperText={errors.username?.message}
@@ -254,6 +253,7 @@ function SigninForm({
               inputRef={ref}
               id="password-input"
               label="Password"
+              value={field.value || ""}
               type={!showPassword ? "password" : "text"}
               InputProps={{
                 endAdornment: (
@@ -300,6 +300,7 @@ function SignupForm({
               id="username-input"
               label="Username"
               type="text"
+              value={field.value || ""}
               aria-invalid={errors.username ? "true" : "false"}
               error={!!errors.username}
               helperText={errors.username?.message}
@@ -320,6 +321,7 @@ function SignupForm({
               id="email-input"
               label="Email"
               type="text"
+              value={field.value || ""}
               aria-invalid={errors.email ? "true" : "false"}
               error={!!errors.email}
               helperText={errors.email?.message}
@@ -340,6 +342,7 @@ function SignupForm({
               id="first-name-input"
               label="First Name"
               type="text"
+              value={field.value || ""}
               aria-invalid={errors.first_name ? "true" : "false"}
               error={!!errors.first_name}
               helperText={errors.first_name?.message}
@@ -360,6 +363,7 @@ function SignupForm({
               id="last-name-input"
               label="Last Name"
               type="text"
+              value={field.value || ""}
               aria-invalid={errors.last_name ? "true" : "false"}
               error={!!errors.last_name}
               helperText={errors.last_name?.message}
@@ -380,6 +384,7 @@ function SignupForm({
               id="password-input"
               label="Password"
               type={!showPassword ? "password" : "text"}
+              value={field.value || ""}
               sx={{ width: { xs: 200, sm: 248 } }}
               aria-invalid={errors.password ? "true" : "false"}
               error={!!errors.password}
@@ -413,6 +418,7 @@ function SignupForm({
               id="confirm-password-input"
               label="Confirm Password"
               type={!showPassword ? "password" : "text"}
+              value={field.value || ""}
               aria-invalid={errors.confirm_password ? "true" : "false"}
               error={!!errors.confirm_password}
               helperText={errors.confirm_password?.message}
