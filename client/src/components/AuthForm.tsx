@@ -1,10 +1,12 @@
 import {
   Box,
   Button,
+  Container,
   Grid,
   IconButton,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -22,9 +24,14 @@ import {
   Controller,
   FieldErrors,
   SubmitHandler,
+  UseFormGetValues,
+  UseFormSetError,
+  UseFormTrigger,
   useForm,
 } from "react-hook-form";
 import { useLocation } from "react-router-dom";
+import { ErrorMessage } from "@hookform/error-message";
+import ErrorIcon from "@mui/icons-material/Error";
 
 interface defaultSignupValues {
   first_name: string;
@@ -62,12 +69,16 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
   const {
     control,
     formState,
+    getValues,
     reset,
-    register,
+    trigger,
+    setError,
     handleSubmit,
     formState: { isSubmitSuccessful, errors },
   } = useForm<defaultSigninValues | defaultSignupValues>({
-    defaultValues: isSignIn ? defaultLogin : defaultSignup,
+    values: isSignIn ? defaultLogin : defaultSignup,
+    criteriaMode: "all",
+    mode: "all",
   });
   const [refreshToken, setRefreshToken] = useLocalStorage("refresh", null);
   const location = useLocation();
@@ -81,6 +92,8 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
       reset(defaultSignup);
     }
   }, [isSignIn]);
+
+  console.log(errors);
 
   const handleShowPassword = (event: React.MouseEvent) => {
     setShowPassword((preValue) => !preValue);
@@ -148,8 +161,12 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
         borderRadius={3}
         sx={{
           width: { xs: "100%", sm: "50%" },
-          "& .MuiFormHelperText-root::before": {
-            content: '"⚠ "',
+          "& .FormErrorText-root, .FormErrorText-root::before": {
+            fontSize: "0.75rem",
+            fontWeight: 600,
+          },
+          "& .FormErrorText-root": {
+            pl: "14px",
           },
         }}
       >
@@ -171,6 +188,9 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
             <SignupForm
               control={control}
               errors={errors}
+              trigger={trigger}
+              getValues={getValues}
+              setError={setError}
               showPassword={showPassword}
               showPasswordHandler={handleShowPassword}
             />
@@ -199,8 +219,11 @@ type signInType = {
 };
 
 type signUpType = {
-  control: Control<defaultSignupValues | defaultSigninValues, any>;
+  control: Control<defaultSigninValues | defaultSignupValues, any>;
   errors: FieldErrors<defaultSignupValues>;
+  setError: UseFormSetError<defaultSignupValues>;
+  trigger: UseFormTrigger<defaultSigninValues | defaultSignupValues>;
+  getValues: UseFormGetValues<defaultSigninValues | defaultSignupValues>;
   showPassword: boolean;
   showPasswordHandler: React.MouseEventHandler;
 };
@@ -230,11 +253,35 @@ function SigninForm({
               value={field.value || ""}
               aria-invalid={errors.password ? "true" : "false"}
               error={!!errors.username}
-              helperText={errors.username?.message}
+              // helperText={errors.username?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
         />
+        <Grid item sx={{ mt: 1 }}>
+          <ErrorMessage
+            errors={errors}
+            name="username"
+            render={({ messages }) =>
+              messages &&
+              Object.entries(messages).map(([type, message]) => (
+                <Typography
+                  component="div"
+                  display="flex"
+                  className="FormErrorText-root"
+                  color="error"
+                  key={type}
+                  sx={{ width: { xs: 200, sm: 248 } }}
+                >
+                  <Typography component="span" fontSize="1.2em" mr={1}>
+                    <ErrorIcon fontSize="inherit" />
+                  </Typography>
+                  {message}
+                </Typography>
+              ))
+            }
+          />
+        </Grid>
       </Grid>
       <Grid item>
         <Controller
@@ -242,10 +289,6 @@ function SigninForm({
           control={control}
           rules={{
             required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Password must be at least 8 characters long",
-            },
           }}
           render={({ field: { ref, ...field } }) => (
             <TextField
@@ -270,11 +313,33 @@ function SigninForm({
               }}
               aria-invalid={errors.password ? "true" : "false"}
               error={!!errors.password}
-              helperText={errors.password?.message}
+              // helperText={errors.password?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
         />
+        <Grid item sx={{ mt: 1 }}>
+          <ErrorMessage
+            errors={errors}
+            name="password"
+            render={({ messages }) =>
+              messages &&
+              Object.entries(messages).map(([type, message]) => (
+                <Typography
+                  key={type}
+                  className="FormErrorText-root"
+                  color="error"
+                  sx={{ width: { xs: 200, sm: 248 } }}
+                >
+                  <Typography component="span" fontSize="1.2em" mr={1}>
+                    <ErrorIcon fontSize="inherit" />
+                  </Typography>
+                  {message}
+                </Typography>
+              ))
+            }
+          />
+        </Grid>
       </Grid>
     </React.Fragment>
   );
@@ -283,6 +348,8 @@ function SigninForm({
 function SignupForm({
   control,
   errors,
+  trigger,
+  getValues,
   showPassword,
   showPasswordHandler,
 }: signUpType) {
@@ -292,7 +359,9 @@ function SignupForm({
         <Controller
           name="username"
           control={control}
-          rules={{ required: "Username is required" }}
+          rules={{
+            required: "Username is required",
+          }}
           render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
@@ -303,17 +372,46 @@ function SignupForm({
               value={field.value || ""}
               aria-invalid={errors.username ? "true" : "false"}
               error={!!errors.username}
-              helperText={errors.username?.message}
+              // helperText={errors.username?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
         />
+        <Grid item sx={{ mt: 1 }}>
+          <ErrorMessage
+            errors={errors}
+            name="username"
+            render={({ messages }) =>
+              messages &&
+              Object.entries(messages).map(([type, message]) => (
+                <Typography
+                  key={type}
+                  className="FormErrorText-root"
+                  color="error"
+                  sx={{ width: { xs: 200, sm: 248 } }}
+                >
+                  <Typography component="span" fontSize="1.2em" mr={1}>
+                    <ErrorIcon fontSize="inherit" />
+                  </Typography>
+                  {message}
+                </Typography>
+              ))
+            }
+          />
+        </Grid>
       </Grid>
       <Grid item>
         <Controller
           name="email"
           control={control}
-          rules={{ required: "Email is required" }}
+          rules={{
+            required: "Email is required",
+            pattern: {
+              value:
+                /^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/,
+              message: "unvalid email address",
+            },
+          }}
           render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
@@ -324,11 +422,33 @@ function SignupForm({
               value={field.value || ""}
               aria-invalid={errors.email ? "true" : "false"}
               error={!!errors.email}
-              helperText={errors.email?.message}
+              // helperText={errors.email?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
         />
+        <Grid item sx={{ mt: 1 }}>
+          <ErrorMessage
+            errors={errors}
+            name="email"
+            render={({ messages }) =>
+              messages &&
+              Object.entries(messages).map(([type, message]) => (
+                <Typography
+                  key={type}
+                  className="FormErrorText-root"
+                  color="error"
+                  sx={{ width: { xs: 200, sm: 248 } }}
+                >
+                  <Typography component="span" fontSize="1.2em" mr={1}>
+                    <ErrorIcon fontSize="inherit" />
+                  </Typography>
+                  {message}
+                </Typography>
+              ))
+            }
+          />
+        </Grid>
       </Grid>
       <Grid item>
         <Controller
@@ -345,11 +465,33 @@ function SignupForm({
               value={field.value || ""}
               aria-invalid={errors.first_name ? "true" : "false"}
               error={!!errors.first_name}
-              helperText={errors.first_name?.message}
+              // helperText={errors.first_name?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
         />
+        <Grid item sx={{ mt: 1 }}>
+          <ErrorMessage
+            errors={errors}
+            name="first_name"
+            render={({ messages }) =>
+              messages &&
+              Object.entries(messages).map(([type, message]) => (
+                <Typography
+                  key={type}
+                  className="FormErrorText-root"
+                  color="error"
+                  sx={{ width: { xs: 200, sm: 248 } }}
+                >
+                  <Typography component="span" fontSize="1.2em" mr={1}>
+                    <ErrorIcon fontSize="inherit" />
+                  </Typography>
+                  {message}
+                </Typography>
+              ))
+            }
+          />
+        </Grid>
       </Grid>
       <Grid item>
         <Controller
@@ -366,17 +508,52 @@ function SignupForm({
               value={field.value || ""}
               aria-invalid={errors.last_name ? "true" : "false"}
               error={!!errors.last_name}
-              helperText={errors.last_name?.message}
+              // helperText={errors.last_name?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
             />
           )}
         />
+        <Grid item sx={{ mt: 1 }}>
+          <ErrorMessage
+            errors={errors}
+            name="last_name"
+            render={({ messages }) =>
+              messages &&
+              Object.entries(messages).map(([type, message]) => (
+                <Typography
+                  key={type}
+                  className="FormErrorText-root"
+                  color="error"
+                  sx={{ width: { xs: 200, sm: 248 } }}
+                >
+                  <Typography component="span" fontSize="1.2em" mr={1}>
+                    <ErrorIcon fontSize="inherit" />
+                  </Typography>
+                  {message}
+                </Typography>
+              ))
+            }
+          />
+        </Grid>
       </Grid>
       <Grid item>
         <Controller
           name="password"
           control={control}
-          rules={{ required: "Password is required" }}
+          rules={{
+            required: "Password is required",
+            minLength: {
+              value: 8,
+              message: "8 character minimum",
+            },
+            validate: {
+              hasDigit: (value) => /[\d]/.test(value) || "1 digit",
+              hasLower: (value) => /[a-z]/.test(value) || "1 lower case letter",
+              hasUpper: (value) => /[A-Z]/.test(value) || "1 upper case letter",
+              specialChar: (value) =>
+                /[#?!@$%^&*-]/.test(value) || "1 special character",
+            },
+          }}
           render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
@@ -388,7 +565,14 @@ function SignupForm({
               sx={{ width: { xs: 200, sm: 248 } }}
               aria-invalid={errors.password ? "true" : "false"}
               error={!!errors.password}
-              helperText={errors.password?.message}
+              // helperText={errors.password?.message}
+              onChange={(event) => {
+                field.onChange(event);
+                {
+                  getValues("confirm_password").length > 0 &&
+                    trigger("confirm_password");
+                }
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -405,12 +589,49 @@ function SignupForm({
             />
           )}
         />
+        <Grid item sx={{ mt: 1 }}>
+          <ErrorMessage
+            errors={errors}
+            name="password"
+            render={({ messages }) =>
+              messages &&
+              Object.entries(messages).map(([type, message]) => (
+                <Typography
+                  component="div"
+                  key={type}
+                  className="FormErrorText-root"
+                  color="error"
+                  sx={{ width: { xs: 200, sm: 248 } }}
+                >
+                  <Typography component="span" fontSize="1.2em" mr={1}>
+                    <ErrorIcon fontSize="inherit" />
+                  </Typography>
+                  {message}
+                </Typography>
+              ))
+            }
+          />
+        </Grid>
       </Grid>
       <Grid item>
         <Controller
           name="confirm_password"
           control={control}
-          rules={{ required: "Confirm Password is required" }}
+          rules={{
+            required: "Confirm Password is required",
+            validate: {
+              matchPassword: (value, event) =>
+                value === event.password || "passwords must match",
+              matchPassword2: (value, event) => {
+                if (isSignUpType(event)) {
+                  return (
+                    value === event.confirm_password || "passwords must match"
+                  );
+                }
+                return true;
+              },
+            },
+          }}
           render={({ field: { ref, ...field } }) => (
             <TextField
               {...field}
@@ -421,7 +642,7 @@ function SignupForm({
               value={field.value || ""}
               aria-invalid={errors.confirm_password ? "true" : "false"}
               error={!!errors.confirm_password}
-              helperText={errors.confirm_password?.message}
+              // helperText={errors.confirm_password?.message}
               sx={{ width: { xs: 200, sm: 248 } }}
               InputProps={{
                 endAdornment: (
@@ -439,7 +660,33 @@ function SignupForm({
             />
           )}
         />
+        <Grid item sx={{ mt: 1 }}>
+          <ErrorMessage
+            errors={errors}
+            name="confirm_password"
+            render={({ messages }) =>
+              messages &&
+              Object.entries(messages).map(([type, message]) => (
+                <Typography
+                  key={type}
+                  className="FormErrorText-root"
+                  color="error"
+                  sx={{ width: { xs: 200, sm: 248 } }}
+                >
+                  <Typography component="span" fontSize="1.2em" mr={1}>
+                    <ErrorIcon fontSize="inherit" />
+                  </Typography>
+                  {message}
+                </Typography>
+              ))
+            }
+          />
+        </Grid>
       </Grid>
     </React.Fragment>
   );
+}
+
+function isSignUpType(object: any): object is defaultSignupValues {
+  return "confirm_password" in object;
 }
