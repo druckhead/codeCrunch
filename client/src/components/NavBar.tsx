@@ -21,6 +21,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
+import FeedIcon from "@mui/icons-material/Feed";
 import styles from "./NavBar.module.css";
 
 import {
@@ -37,8 +38,9 @@ import {
   usePrevLocationDispactch,
 } from "../context/LocationContext";
 
-const pages = ["Dashboard", "Profile", "Sign in", "Sign out"];
+const pages = ["Feed", "Dashboard", "Profile", "Sign in", "Sign out"];
 const pagesIcons = [
+  <FeedIcon />,
   <DashboardIcon />,
   <AccountBoxIcon />,
   <LoginIcon />,
@@ -246,6 +248,9 @@ export default function NavBar() {
                   backgroundColor: "inherit",
                   width: { xs: "75vw", sm: "40vw" },
                   height: "100%",
+                  "& .MuiDivider-root": {
+                    m: 0,
+                  },
                 }}
               >
                 <Link
@@ -300,7 +305,7 @@ export default function NavBar() {
                   </Box>
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={handleDrawerClose}>
+                <MenuItem onClick={handleDrawerClose} sx={{ my: 0 }}>
                   <Link
                     to="https://github.com/druckhead/"
                     style={{ color: "inherit" }}
