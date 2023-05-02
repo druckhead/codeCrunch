@@ -13,25 +13,6 @@ class JobSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CreateJobSerializer(serializers.ModelSerializer):
-    company_id = serializers.CharField(max_length=128, write_only=True)
-
-    class Meta:
-        model = Job
-        fields = "__all__"
-        read_only_fields = ["companies"]
-        write_only_fields = ["company_id"]
-
-    def create(self, validated_data):
-        job = Job(
-            title=validated_data["title"],
-            seniority=validated_data["seniority"],
-        )
-        job.save()
-        job.companies.add(validated_data["company_id"])
-        return job
-
-
 class UpdateJobSerializer(serializers.ModelSerializer):
     company_ids = serializers.ListField(write_only=True)
 

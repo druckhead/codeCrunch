@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 
 from .managers import UserManager
@@ -37,7 +38,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Company(models.Model):
     name = models.CharField(max_length=128)
-    country = models.CharField(max_length=128)
 
     class Meta:
         ordering = ["name"]
@@ -47,8 +47,11 @@ class Company(models.Model):
 
 class Job(models.Model):
     title = models.CharField(max_length=128)
-    seniority = models.CharField(max_length=16)
-    companies = models.ManyToManyField(Company)
+    companies = models.ManyToManyField(
+        Company,
+        through="CompanyJob",
+        related_name=_("job_compaines"),
+    )
 
     class Meta:
         ordering = ["title"]
@@ -56,20 +59,33 @@ class Job(models.Model):
         verbose_name_plural = _("jobs")
 
 
+class CompanyJob(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.RESTRICT)
+    job = models.ForeignKey(Job, on_delete=models.RESTRICT)
+    country = CountryField()
+
+    class Meta:
+        verbose_name = _("company_job")
+        verbose_name_plural = _("company_jobs")
+
+
 class Vote(models.TextChoices):
     LIKE = "LI", _("Like")
     DISLIKE = "DI", _("Dislike")
 
 
-class Post(TimeStampedModel, TitleDescriptionModel, models.Model):
+class Post(TimeStampedModel, models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    users = models.ManyToManyField(
+    votes = models.ManyToManyField(
         User,
         through="PostVotes",
         related_name="user_post_votes",
     )
     job = models.ForeignKey(Job, on_delete=models.DO_NOTHING)
     post_type = models.CharField(max_length=32)
+    seniority = models.CharField(max_length=16)
+    years_experience = models.IntegerField()
+    content = models.JSONField()
 
     class Meta:
         verbose_name = _("post")
@@ -94,13 +110,13 @@ class PostVotes(TimeStampedModel, models.Model):
 
 class PostSolution(TimeStampedModel, models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    users = models.ManyToManyField(
+    votes = models.ManyToManyField(
         User,
         through="PostSolutionVotes",
         related_name="user_postsolution_votes",
     )
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    solution = models.TextField()
+    content = models.JSONField()
 
     class Meta:
         verbose_name = _("post_solution")

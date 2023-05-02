@@ -1,15 +1,16 @@
+from django_countries.serializers import CountryFieldMixin
 from rest_framework import serializers
 
 from ..models import Company
 
 
-class CompanySerializer(serializers.ModelSerializer):
+class CompanySerializer(CountryFieldMixin, serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = "__all__"
 
 
-class CreateCompanySerializer(serializers.ModelSerializer):
+class CreateCompanySerializer(CountryFieldMixin, serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = "__all__"
@@ -17,7 +18,6 @@ class CreateCompanySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         company = Company(
             name=validated_data["name"],
-            country=validated_data["country"],
         )
         company.save()
         return company

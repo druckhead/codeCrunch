@@ -11,7 +11,7 @@ from ..serializers import CompanySerializers as serializers
 class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = serializers.CompanySerializer
-    permission_classes = [CompanyPermissions, BaseCUDPermission]
+    # permission_classes = [CompanyPermissions, BaseCUDPermission]
     authentication_classes = [JWTAuthentication]
 
     def get_serializer_class(self):
