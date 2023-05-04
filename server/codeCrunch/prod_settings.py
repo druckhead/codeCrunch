@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "core.apps.CoreConfig",
+    "django_countries",
 ]
 
 AUTH_USER_MODEL = "core.User"
