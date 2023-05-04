@@ -3,7 +3,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
-from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
+from django_extensions.db.models import TimeStampedModel
 
 from .managers import UserManager
 
@@ -75,16 +75,32 @@ class Vote(models.TextChoices):
 
 
 class Post(TimeStampedModel, models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    class Seniority(models.TextChoices):
+        TRAINEE = "TR", _("Trainee")
+        JUNIOR = "JR", _("Junior")
+        MIDDLE = "MD", _("Middle")
+        SENIOR = "SR", _("Senior")
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+    )
     votes = models.ManyToManyField(
         User,
         through="PostVotes",
         related_name="user_post_votes",
     )
-    job = models.ForeignKey(Job, on_delete=models.DO_NOTHING)
+    company_job = models.ForeignKey(
+        CompanyJob,
+        on_delete=models.RESTRICT,
+    )
     post_type = models.CharField(max_length=32)
-    seniority = models.CharField(max_length=16)
+    seniority = models.CharField(
+        max_length=16,
+        choices=Seniority.choices,
+    )
     years_experience = models.IntegerField()
+    language = models.CharField(max_length=32)
     content = models.JSONField()
 
     class Meta:
@@ -93,8 +109,8 @@ class Post(TimeStampedModel, models.Model):
 
 
 class PostVotes(TimeStampedModel, models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    post = models.ForeignKey(Post, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)
+    post = models.ForeignKey(Post, on_delete=models.RESTRICT)
     vote = models.CharField(max_length=2, choices=Vote.choices)
 
     class Meta:
@@ -109,13 +125,13 @@ class PostVotes(TimeStampedModel, models.Model):
 
 
 class PostSolution(TimeStampedModel, models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)
     votes = models.ManyToManyField(
         User,
         through="PostSolutionVotes",
         related_name="user_postsolution_votes",
     )
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.RESTRICT)
     content = models.JSONField()
 
     class Meta:
@@ -124,8 +140,8 @@ class PostSolution(TimeStampedModel, models.Model):
 
 
 class PostSolutionVotes(TimeStampedModel, models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    postsolution = models.ForeignKey(PostSolution, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)
+    postsolution = models.ForeignKey(PostSolution, on_delete=models.RESTRICT)
     vote = models.CharField(max_length=2, choices=Vote.choices)
 
     class Meta:
