@@ -1,9 +1,8 @@
+from django.db import transaction
+from django_countries import serializer_fields
 from rest_framework import serializers
 
-from .JobSerializers import JobSerializer
-
-from .UserSerializers import UserSerializer
-from ..models import Post, PostSolution, User
+from ..models import Company, CompanyJob, Job, Post, PostSolution
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -13,27 +12,45 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CreatePostSerializer(serializers.ModelSerializer):
+    company = serializers.CharField(max_length=128, write_only=True)
+    job = serializers.CharField(max_length=128, write_only=True)
+    country = serializer_fields.CountryField(write_only=True)
+
     class Meta:
         model = Post
         fields = "__all__"
+        extra_kwargs = {
+            "company_job": {
+                "read_only": True,
+            },
+        }
 
     def create(self, validated_data):
-        post = Post(
-            title=validated_data["title"],
-            description=validated_data["description"],
-            post_type=validated_data["post_type"],
-            job=validated_data["job"],
-            user=validated_data["user"],
-        )
-        post.save()
-        return post
+        with transaction.atomic():
+            job = Job.objects.get_or_create(title=validated_data.pop("job")).first()
+
+            company = Company.objects.get_or_create(
+                name=validated_data.pop("company")
+            ).first()
+
+            job.companies.add(company)
+
+            companyjob = CompanyJob.objects.select_for_update().get(
+                job_id=job, company_id=company
+            )
+            companyjob.country = validated_data.pop("country")
+            companyjob.save()
+
+            post = Post.objects.create(company_job=companyjob, **validated_data)
+
+            return post
 
 
 class UpdatePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = "__all__"
-        read_only_fields = ["user"]
+        write_only_fields = ["user"]
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)
