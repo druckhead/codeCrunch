@@ -27,11 +27,13 @@ class CreatePostSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         with transaction.atomic():
-            job = Job.objects.get_or_create(title=validated_data.pop("job")).first()
+            job, job_created = Job.objects.get_or_create(
+                title=validated_data.pop("job")
+            )
 
-            company = Company.objects.get_or_create(
+            company, created_company = Company.objects.get_or_create(
                 name=validated_data.pop("company")
-            ).first()
+            )
 
             job.companies.add(company)
 
