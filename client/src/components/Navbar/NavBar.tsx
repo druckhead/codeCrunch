@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -30,30 +30,20 @@ import {
   useUserDispactch,
 } from "../../context/UserContext";
 import axios from "axios";
-import { API_ENDPOINTS } from "../../utils/endpointConstants";
 import {
   LOCATION_ACTIONS,
   usePrevLocation,
   usePrevLocationDispactch,
 } from "../../context/LocationContext";
+import { ERoutes } from "../../utils/endpointConstants";
 
-const pages = ["Feed", "Dashboard", "Profile", "Sign in", "Sign out"];
-const pagesIcons = [
-  <FeedIcon />,
-  <DashboardIcon />,
-  <AccountBoxIcon />,
-  <LoginIcon />,
-  <LogoutIcon />,
-];
-
-export default function NavBar() {
+const NavBar = () => {
   const theme = useTheme();
   const colorMode = React.useContext(ColorModeContext);
   const [open, setOpen] = React.useState(false);
   const user = useUser();
   const userDispatch = useUserDispactch();
   const location = useLocation();
-  const prevLocation = usePrevLocation();
   const prevLocationDispatch = usePrevLocationDispactch();
   const navigate = useNavigate();
 
@@ -75,7 +65,7 @@ export default function NavBar() {
 
   const handleSignOut = (event: React.MouseEvent) => {
     const logout = async () => {
-      const response = await axios.post(API_ENDPOINTS.AUTH.LOGOUT, {
+      const response = await axios.post(LOGOUT_URL, {
         refresh: user.refreshToken,
       });
       userDispatch({
@@ -363,4 +353,18 @@ export default function NavBar() {
       </Container>
     </AppBar>
   );
-}
+};
+
+export default NavBar;
+
+const { API_BASE_URL, TOKEN_PREFIX, LOGOUT } = ERoutes;
+const LOGOUT_URL = `${API_BASE_URL}${TOKEN_PREFIX}${LOGOUT}`;
+
+const pages = ["Feed", "Dashboard", "Profile", "Sign in", "Sign out"];
+const pagesIcons = [
+  <FeedIcon />,
+  <DashboardIcon />,
+  <AccountBoxIcon />,
+  <LoginIcon />,
+  <LogoutIcon />,
+];
