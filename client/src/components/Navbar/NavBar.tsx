@@ -6,17 +6,16 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { Divider, Drawer, useTheme } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import BrightnessAutoIcon from "@mui/icons-material/BrightnessAuto";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { ColorModeContext } from "../App";
+import { ColorModeContext } from "../../App";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import CodeCrunchLogoLight from "../assets/logo-light.svg";
-import CodeCrunchLogoDark from "../assets/logo-dark.svg";
+import CodeCrunchLogoLight from "../../assets/logo-light.svg";
+import CodeCrunchLogoDark from "../../assets/logo-dark.svg";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LoginIcon from "@mui/icons-material/Login";
@@ -29,14 +28,14 @@ import {
   User,
   useUser,
   useUserDispactch,
-} from "../context/UserContext";
+} from "../../context/UserContext";
 import axios from "axios";
-import { API_ENDPOINTS } from "../utils/endpointConstants";
+import { API_ENDPOINTS } from "../../utils/endpointConstants";
 import {
   LOCATION_ACTIONS,
   usePrevLocation,
   usePrevLocationDispactch,
-} from "../context/LocationContext";
+} from "../../context/LocationContext";
 
 const pages = ["Feed", "Dashboard", "Profile", "Sign in", "Sign out"];
 const pagesIcons = [
@@ -174,14 +173,13 @@ export default function NavBar() {
     }
   }, [user.isLoggedIn, location.pathname]);
 
-  useEffect(() => {
-    console.log(user);
-  }, [user.isLoggedIn]);
-
   return (
     <AppBar
       position="static"
       sx={{
+        position: "sticky",
+        top: 0,
+        zIndex: 1,
         backgroundColor: "inherit",
         color: theme.palette.text.primary,
         mb: 5,
@@ -248,7 +246,7 @@ export default function NavBar() {
                   backgroundColor: "inherit",
                   width: { xs: "75vw", sm: "40vw" },
                   height: "100%",
-                  "& .MuiDivider-root": {
+                  ".MuiDivider-root": {
                     m: 0,
                   },
                 }}
@@ -305,9 +303,10 @@ export default function NavBar() {
                   </Box>
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={handleDrawerClose} sx={{ my: 0 }}>
+                <MenuItem onClick={handleDrawerClose}>
                   <Link
                     to="https://github.com/druckhead/"
+                    target="_blank"
                     style={{ color: "inherit" }}
                   >
                     <Box display="flex" gap={1}>
@@ -343,6 +342,7 @@ export default function NavBar() {
           >
             <Link
               to="https://github.com/druckhead/"
+              target="_blank"
               style={{ color: "inherit" }}
             >
               <IconButton color="inherit">
