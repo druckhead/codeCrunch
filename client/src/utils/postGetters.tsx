@@ -1,11 +1,6 @@
 import axios from "axios";
-import { Company } from "../components/PostEditor";
+import { Company } from "../components/PostEditor/PostEditor";
 import { ERoutes } from "./endpointConstants";
-
-interface Job {
-  id: number;
-  title: string;
-}
 
 export const getField = async (prefix: string): Promise<readonly string[]> => {
   const { API_BASE_URL, V1, COMPANIES_PREFIX, JOBS_PREFIX } = ERoutes;
@@ -21,3 +16,8 @@ export const getField = async (prefix: string): Promise<readonly string[]> => {
       throw new Error("Not Implemented");
   }
 };
+
+interface Job {
+  id: number;
+  title: string;
+}
