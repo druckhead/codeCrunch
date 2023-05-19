@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -10,6 +10,8 @@ import AuthPage from "./pages/AuthPage";
 import { useUser } from "./context/UserContext";
 import { usePrevLocation } from "./context/LocationContext";
 import Dashboard from "./pages/Dashboard";
+import Feed from "./pages/Feed/Feed";
+import ExpandedPost from "./pages/ExpandedPost";
 
 export const ColorModeContext = React.createContext({
   getIsAutoMode: (): boolean => {
@@ -85,6 +87,10 @@ export default function App() {
           <Route path="/" element={<Root />}>
             <Route index element={<HomePage />} />
             <Route
+              path="/feed"
+              element={user.isLoggedIn ? <Feed /> : <Navigate to="/sign_in" />}
+            />
+            <Route
               path="/dashboard"
               element={
                 user.isLoggedIn ? <Dashboard /> : <Navigate to="/sign_in" />
@@ -120,6 +126,7 @@ export default function App() {
                 )
               }
             />
+            <Route path="posts/:postId" element={<ExpandedPost />} />
             <Route path="sign_out" element={<Navigate to="/sign_in" />} />
             <Route path="*" element={<NotFound />} />
           </Route>
