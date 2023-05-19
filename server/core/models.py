@@ -101,6 +101,7 @@ class Post(TimeStampedModel, models.Model):
     )
     years_experience = models.IntegerField()
     language = models.CharField(max_length=128)
+    title = models.CharField(max_length=64)
     content = models.JSONField()
 
     class Meta:
