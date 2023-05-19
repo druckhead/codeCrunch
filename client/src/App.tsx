@@ -6,7 +6,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Root from "./pages/Root";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
-import AuthPage from "./pages/AuthPage";
+import AuthPage from "./pages/Auth/AuthPage";
 import { useUser } from "./context/UserContext";
 import { usePrevLocation } from "./context/LocationContext";
 import Dashboard from "./pages/Dashboard";
