@@ -2,13 +2,21 @@ from django.db import transaction
 from django_countries import serializer_fields
 from rest_framework import serializers
 
+from .CompanyJobSerializer import CompanyJobSerializer
+
+from .UserSerializers import UserSerializer
+
 from ..models import Company, CompanyJob, Job, Post, PostSolution
 
 
 class PostSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    company_job = CompanyJobSerializer()
+
     class Meta:
         model = Post
         fields = "__all__"
+        read_only_fields = ["user"]
 
 
 class CreatePostSerializer(serializers.ModelSerializer):
