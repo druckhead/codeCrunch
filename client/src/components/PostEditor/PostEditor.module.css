@@ -1,0 +1,23 @@
+.wrapperClass {
+  padding: 1rem;
+  border: 1px solid #ccc;
+}
+.editorClass {
+  background-color:lightgray;
+  padding: 1rem;
+  border: 1px solid #ccc;
+}
+.toolbarClass {
+  border: 1px solid #ccc;
+}
+
+.preview {
+  padding: 1rem;
+  margin-top: 1rem;
+  border: 1px solid;
+}
+
+.code pre {
+  background-color: lightgray;
+  padding: 1rem;
+}
